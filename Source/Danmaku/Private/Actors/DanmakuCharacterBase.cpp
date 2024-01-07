@@ -4,6 +4,7 @@
 #include "Actors/DanmakuCharacterBase.h"
 
 #include "PaperFlipbookComponent.h"
+#include "Components/ArrowComponent.h"
 #include "Core/DanmakuPlayerController.h"
 
 ADanmakuCharacterBase::ADanmakuCharacterBase()
@@ -29,7 +30,9 @@ void ADanmakuCharacterBase::Tick(float DeltaSeconds)
 	{
 		if (ADanmakuPlayerController* PlayerController = Cast<ADanmakuPlayerController>(GameInstance->GetFirstLocalPlayerController()))
 		{
-			SetSpriteRotation(PlayerController->GetRotation());
+			float Rotation = PlayerController->GetRotation();
+			SetSpriteRotation(Rotation);
+			SetAnimationDirection(GetArrowComponent()->GetForwardVector(), Rotation);
 		}
 	}
 }
