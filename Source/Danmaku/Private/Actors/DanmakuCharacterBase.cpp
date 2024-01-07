@@ -11,9 +11,32 @@ ADanmakuCharacterBase::ADanmakuCharacterBase()
 	OnCharacterMovementUpdated.AddDynamic(this, &ADanmakuCharacterBase::Animate);
 }
 
-void ADanmakuCharacterBase::SetAnimationDirection(FVector Velocity, float CameraYaw)
+void ADanmakuCharacterBase::SetSpriteRotation(float Rotation)
 {
-	FRotator YawRotation(0.f, CameraYaw, 0.f);
+	GetSprite()->SetWorldRotation(FRotator(0.f, 90.f + Rotation, -90.f));
+}
+
+float ADanmakuCharacterBase::GetSpriteRotation() const
+{
+	return GetSprite()->GetComponentRotation().Yaw;
+}
+
+void ADanmakuCharacterBase::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (UGameInstance* GameInstance = GetGameInstance())
+	{
+		if (ADanmakuPlayerController* PlayerController = Cast<ADanmakuPlayerController>(GameInstance->GetFirstLocalPlayerController()))
+		{
+			SetSpriteRotation(PlayerController->GetRotation());
+		}
+	}
+}
+
+void ADanmakuCharacterBase::SetAnimationDirection(FVector Velocity, float CameraRotation)
+{
+	FRotator YawRotation(0.f, CameraRotation, 0.f);
 	FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 	float Forward = FVector::DotProduct(Velocity.GetSafeNormal(), ForwardDirection);
@@ -43,16 +66,16 @@ void ADanmakuCharacterBase::SetAnimationDirection(FVector Velocity, float Camera
 
 void ADanmakuCharacterBase::Animate(float DeltaSeconds, FVector OldLocation, FVector OldVelocity)
 {
-	float CameraYaw = 0.f;
+	float CameraRotation = 0.f;
 	if (UWorld* World = GetWorld())
 	{
 		if (ADanmakuPlayerController* PlayerController = Cast<ADanmakuPlayerController>(World->GetFirstPlayerController()))
 		{
-			CameraYaw = PlayerController->CameraYaw;
+			CameraRotation = PlayerController->GetRotation();
 		}
 	}
 
-	SetAnimationDirection(OldVelocity, CameraYaw);
+	SetAnimationDirection(OldVelocity, CameraRotation);
 
 	if (OldVelocity.Size() > 0.f)
 	{

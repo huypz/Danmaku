@@ -17,6 +17,10 @@ class DANMAKU_API ADanmakuCharacterBase : public APaperCharacter
 
 public:
 	ADanmakuCharacterBase();
+
+	void SetSpriteRotation(float Rotation);
+
+	float GetSpriteRotation() const;
 	
 protected:
 	UPROPERTY(EditAnywhere, Category = "Animation")
@@ -26,7 +30,9 @@ protected:
 
 	bool bIsMoving;
 
-	void SetAnimationDirection(FVector Velocity, float CameraYaw);
+	virtual void Tick(float DeltaSeconds) override;
+
+	void SetAnimationDirection(FVector Velocity, float CameraRotation);
 	
 	UFUNCTION()
 	void Animate(float DeltaSeconds, FVector OldLocation, FVector OldVelocity);
