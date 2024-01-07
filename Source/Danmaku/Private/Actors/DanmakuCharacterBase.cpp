@@ -4,6 +4,7 @@
 #include "Actors/DanmakuCharacterBase.h"
 
 #include "PaperFlipbookComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Core/DanmakuPlayerController.h"
 
 ADanmakuCharacterBase::ADanmakuCharacterBase()
@@ -21,6 +22,13 @@ void ADanmakuCharacterBase::SetSpriteRotation(float Rotation)
 float ADanmakuCharacterBase::GetSpriteRotation() const
 {
 	return GetSprite()->GetComponentRotation().Yaw;
+}
+
+void ADanmakuCharacterBase::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 }
 
 void ADanmakuCharacterBase::Tick(float DeltaSeconds)

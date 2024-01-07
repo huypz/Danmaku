@@ -30,6 +30,8 @@ protected:
 
 	bool bIsMoving;
 
+	virtual void PostInitializeComponents() override;
+
 	virtual void Tick(float DeltaSeconds) override;
 
 	void SetAnimationDirection(FVector Velocity, float CameraRotation);
