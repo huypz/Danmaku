@@ -4,11 +4,12 @@
 #include "Actors/DanmakuCharacterBase.h"
 
 #include "PaperFlipbookComponent.h"
-#include "Components/ArrowComponent.h"
 #include "Core/DanmakuPlayerController.h"
 
 ADanmakuCharacterBase::ADanmakuCharacterBase()
 {
+	Directionality = FVector(1.f, 0.f, 0.f);
+	
 	OnCharacterMovementUpdated.AddDynamic(this, &ADanmakuCharacterBase::Animate);
 }
 
@@ -32,7 +33,7 @@ void ADanmakuCharacterBase::Tick(float DeltaSeconds)
 		{
 			float Rotation = PlayerController->GetRotation();
 			SetSpriteRotation(Rotation);
-			SetAnimationDirection(GetArrowComponent()->GetForwardVector(), Rotation);
+			SetAnimationDirection(Directionality, Rotation);
 		}
 	}
 }
@@ -76,6 +77,11 @@ void ADanmakuCharacterBase::Animate(float DeltaSeconds, FVector OldLocation, FVe
 		{
 			CameraRotation = PlayerController->GetRotation();
 		}
+	}
+
+	if (OldVelocity.Size() > 0.f)
+	{
+		Directionality = OldVelocity.GetSafeNormal();
 	}
 
 	SetAnimationDirection(OldVelocity, CameraRotation);

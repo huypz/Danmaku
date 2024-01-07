@@ -36,4 +36,7 @@ protected:
 	
 	UFUNCTION()
 	void Animate(float DeltaSeconds, FVector OldLocation, FVector OldVelocity);
+
+private:
+	FVector Directionality;
 };
