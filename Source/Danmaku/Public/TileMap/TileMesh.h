@@ -3,23 +3,21 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
+#include "ProceduralMeshComponent.h"
 #include "TileMesh.generated.h"
-
-class UProceduralMeshComponent;
 
 /**
  * 
  */
 UCLASS()
-class DANMAKU_API UTileMesh : public UObject
+class DANMAKU_API UTileMesh : public UProceduralMeshComponent
 {
 	GENERATED_BODY()
 
 public:
 	bool bIsDrawn;
 	
-	UTileMesh();
+	UTileMesh(const FObjectInitializer& ObjectInitializer);
 
 	void AddTriangle(FVector V1, FVector V2, FVector V3);
 
@@ -35,18 +33,11 @@ public:
 
 	void AddQuadMaskUV(float UMin, float UMax, float VMin, float VMax);
 
-	void SetMaterial(int32 Index, UMaterialInterface* Material);
-
-	void SetTranslucentSortPriority(int32 NewTranslucentSortPriority);
-
 	void Clear();
 
 	void Apply();
 	
 private:
-	UPROPERTY()
-	TObjectPtr<UProceduralMeshComponent> Mesh;
-
 	UPROPERTY()
 	TArray<FVector> Vertices;
 

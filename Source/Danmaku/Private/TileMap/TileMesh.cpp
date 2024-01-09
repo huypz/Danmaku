@@ -3,19 +3,16 @@
 
 #include "TileMap/TileMesh.h"
 
-#include "ProceduralMeshComponent.h"
 #include "Util/ListPool.h"
 
 
 template <typename T>
 TArray<TArray<T>> TListPool<T>::Stack;
 
-UTileMesh::UTileMesh()
+UTileMesh::UTileMesh(const FObjectInitializer& ObjectInitializer) : UProceduralMeshComponent(ObjectInitializer)
 {
 	bBlendTerrain = true;
 	bIsDrawn = false;
-	
-	Mesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("MeshComponent"));
 }
 
 void UTileMesh::AddTriangle(FVector V1, FVector V2, FVector V3)
@@ -57,7 +54,6 @@ void UTileMesh::AddQuadUV(FVector2D UV1, FVector2D UV2, FVector2D UV3, FVector2D
 	TextureUVs.Add(UV2);
 	TextureUVs.Add(UV3);
 	TextureUVs.Add(UV4);
-	
 }
 
 void UTileMesh::AddQuadUV(float UMin, float UMax, float VMin, float VMax)
@@ -84,19 +80,9 @@ void UTileMesh::AddQuadMaskUV(float UMin, float UMax, float VMin, float VMax)
 	BlendUVs.Add(FVector2D(UMax, VMin));
 }
 
-void UTileMesh::SetMaterial(int32 Index, UMaterialInterface* Material)
-{
-	Mesh->SetMaterial(Index, Material);
-}
-
-void UTileMesh::SetTranslucentSortPriority(int32 NewTranslucentSortPriority)
-{
-	Mesh->SetTranslucentSortPriority(NewTranslucentSortPriority);
-}
-
 void UTileMesh::Clear()
 {
-	Mesh->ClearAllMeshSections();
+	ClearAllMeshSections();
 	bIsDrawn = false;
 
 	Vertices = TListPool<FVector>::Get();
@@ -110,7 +96,7 @@ void UTileMesh::Clear()
 
 void UTileMesh::Apply()
 {
-	Mesh->CreateMeshSection(
+	CreateMeshSection(
 		0,
 		Vertices,
 		Triangles,
