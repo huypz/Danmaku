@@ -16,8 +16,8 @@ class DANMAKU_API UTileMesh : public UProceduralMeshComponent
 
 public:
 	bool bIsDrawn;
-	
-	UTileMesh(const FObjectInitializer& ObjectInitializer);
+
+	explicit UTileMesh(const FObjectInitializer& ObjectInitializer);
 
 	void AddTriangle(FVector V1, FVector V2, FVector V3);
 

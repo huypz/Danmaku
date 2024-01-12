@@ -11,6 +11,9 @@ TArray<TArray<T>> TListPool<T>::Stack;
 
 UTileMesh::UTileMesh(const FObjectInitializer& ObjectInitializer) : UProceduralMeshComponent(ObjectInitializer)
 {
+	bUseAsyncCooking = true;
+
+	
 	bBlendTerrain = true;
 	bIsDrawn = false;
 }
@@ -107,7 +110,7 @@ void UTileMesh::Apply()
 		TArray<FVector2D>(),
 		TArray<FColor>(),
 		TArray<FProcMeshTangent>(),
-		true
+		false
 	);
 
 	TListPool<FVector>::Add(Vertices);
