@@ -1,6 +1,7 @@
-﻿// © 2024, Huy Phan. All rights reserved.
+﻿// Copyright Huy Phan. All Rights Reserved.
 
 #pragma once
+
 
 UENUM()
 enum class ETileType : int32
