@@ -22,16 +22,16 @@ ATileChunk::ATileChunk()
 	InstancedStaticMeshComponent->SetNumCustomDataFloats(7);
 	InstancedStaticMeshComponent->SetCastShadow(false);
 	
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> PlaneMesh(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
-	if (PlaneMesh.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> Mesh(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
+	if (Mesh.Succeeded())
 	{
-		InstancedStaticMeshComponent->SetStaticMesh(PlaneMesh.Object);
+		InstancedStaticMeshComponent->SetStaticMesh(Mesh.Object);
 	}
 
-	static ConstructorHelpers::FObjectFinder<UMaterialInstance> MaterialInstanceObj(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Materials/MI_Tile.MI_Tile'"));
-	if (MaterialInstanceObj.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UMaterialInstance> Material(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Materials/MI_Tile.MI_Tile'"));
+	if (Material.Succeeded())
 	{
-		InstancedStaticMeshComponent->SetMaterial(0, MaterialInstanceObj.Object);
+		InstancedStaticMeshComponent->SetMaterial(0, Material.Object);
 	}
 }
 
@@ -174,7 +174,7 @@ void ATileChunk::Triangulate()
 {
 	if (GEngine)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Yellow, TEXT("Chunk refreshed"));
+		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Yellow, TEXT("Chunk refreshed"));
 	}
 	
 	InstancedStaticMeshComponent->ClearInstances();

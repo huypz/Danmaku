@@ -10,6 +10,13 @@ ADanmakuCharacterBase::ADanmakuCharacterBase()
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 	
+	static ConstructorHelpers::FObjectFinder<UMaterialInstance> SpriteMaterial(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Materials/MI_Sprite.MI_Sprite'"));
+	if (SpriteMaterial.Succeeded())
+	{
+		GetSprite()->SetMaterial(0, SpriteMaterial.Object);
+	}
+	GetSprite()->SetTranslucentSortPriority(10000);
+	
 	OnCharacterMovementUpdated.AddDynamic(this, &ADanmakuCharacterBase::Animate);
 }
 

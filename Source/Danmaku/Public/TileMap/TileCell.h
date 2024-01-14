@@ -21,10 +21,10 @@ class DANMAKU_API UTileCell : public UObject
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY()
 	FTileCoordinates Coordinates;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY()
 	ETileType TileType;
 
 	UPROPERTY()
@@ -43,6 +43,6 @@ public:
 	UTileCell* GetNeighbor(ETileDirection Direction);
 
 private:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY()
 	TArray<UTileCell*> Neighbors;
 };

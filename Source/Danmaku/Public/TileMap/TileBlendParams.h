@@ -8,7 +8,7 @@
 
 /**
  * The cursed struct that calculates god-knows-what for tile blending.
- * The code needs to be refactored and optimized, but that is a problem for future me.
+ * It needs to be refactored and optimized, but that is a problem for future me.
  */
 USTRUCT()
 struct FTileBlendParams
@@ -40,7 +40,7 @@ struct FTileBlendParams
 	 * @param X Cell Coordinate X
 	 * @param Y Cell Coordinate Y
 	 * @param DirectionIndex \n
-     * 0: North1\n
+	 * 0: North1\n
 	 * 1: North2\n
 	 * 2: NorthEast\n
 	 * 3: East1\n

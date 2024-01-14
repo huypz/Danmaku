@@ -42,6 +42,7 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TArray<ATileChunk*> Chunks;
 
+	UPROPERTY()
 	TObjectPtr<UTileMapEditor> Editor;
 
 	void CreateCell(int32 X, int32 Y, int32 Index);
