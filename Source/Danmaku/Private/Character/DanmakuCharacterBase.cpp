@@ -4,6 +4,7 @@
 #include "Character/DanmakuCharacterBase.h"
 
 #include "PaperFlipbookComponent.h"
+#include "Components/CapsuleComponent.h"
 
 ADanmakuCharacterBase::ADanmakuCharacterBase()
 {
@@ -93,6 +94,7 @@ void ADanmakuCharacterBase::Animate(float DeltaSeconds, FVector OldLocation, FVe
 			break;
 		}
 	}
-
+	
+	GetCapsuleComponent()->SetWorldRotation(FRotator(0.f, GetController()->GetControlRotation().Yaw + 90.f, 0.f));
 	GetSprite()->SetWorldRotation(FRotator(0.f, GetController()->GetControlRotation().Yaw + 90.f, -90.f));
 }

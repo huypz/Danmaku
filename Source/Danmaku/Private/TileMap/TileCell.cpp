@@ -7,7 +7,7 @@
 
 UTileCell::UTileCell()
 {
-	TileType = ETileType::Blank;
+	TileType = ETileType::GrassForest;
 	Neighbors.SetNum(8);
 	IsBlendDrawn.SetNum(12);
 }

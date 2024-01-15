@@ -21,13 +21,13 @@ class DANMAKU_API UTileCell : public UObject
 	GENERATED_BODY()
 
 public:
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere)
 	FTileCoordinates Coordinates;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere)
 	ETileType TileType;
 
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<ATileChunk> Chunk;
 	
 	TArray<bool> IsBlendDrawn;
@@ -43,6 +43,6 @@ public:
 	UTileCell* GetNeighbor(ETileDirection Direction);
 
 private:
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere)
 	TArray<UTileCell*> Neighbors;
 };

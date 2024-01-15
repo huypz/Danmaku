@@ -4,7 +4,9 @@
 #include "Character/DanmakuCharacter.h"
 
 #include "PaperFlipbook.h"
+#include "PaperFlipbookComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
 ADanmakuCharacter::ADanmakuCharacter()
@@ -15,9 +17,13 @@ ADanmakuCharacter::ADanmakuCharacter()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = false;
+
+	GetCapsuleComponent()->SetCapsuleHalfHeight(50.f);
+	GetCapsuleComponent()->SetCapsuleRadius(25.f);
 	
 	CameraSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArmComponent"));
 	CameraSpringArm->SetupAttachment(RootComponent);
+	CameraSpringArm->SetRelativeLocation(FVector(0.f, -25.f, 0.f));
 	CameraSpringArm->TargetArmLength = 1000.f;
 	CameraSpringArm->bEnableCameraLag = false;
 	CameraSpringArm->bEnableCameraRotationLag = false;
@@ -31,7 +37,15 @@ ADanmakuCharacter::ADanmakuCharacter()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	Camera->SetupAttachment(CameraSpringArm, USpringArmComponent::SocketName);
 	Camera->ProjectionMode = ECameraProjectionMode::Orthographic;
-	Camera->SetOrthoWidth(2400.f);
+	Camera->SetOrthoWidth(2800.f);
+	Camera->PostProcessSettings.bOverride_AutoExposureBias = 1;
+	Camera->PostProcessSettings.AutoExposureBias = 0.f;
+	Camera->PostProcessSettings.bOverride_AutoExposureMinBrightness = 1;
+	Camera->PostProcessSettings.AutoExposureMinBrightness = 1.f;
+	Camera->PostProcessSettings.bOverride_AutoExposureMaxBrightness = 1;
+	Camera->PostProcessSettings.AutoExposureMaxBrightness = 1.f;
+	Camera->PostProcessSettings.bOverride_ToneCurveAmount = 1;
+	Camera->PostProcessSettings.ToneCurveAmount = 0.f;
 
 	// Idle
 	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> IdleUp(TEXT("/Script/Paper2D.PaperFlipbook'/Game/PaperAssets/Character/Wizard/FB_WizardIdleUp.FB_WizardIdleUp'"));

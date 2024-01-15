@@ -3,10 +3,13 @@
 
 #include "Player/DanmakuPlayerController.h"
 
+#include "EngineUtils.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputAction.h"
 #include "InputMappingContext.h"
+#include "Engine/RendererSettings.h"
+#include "TileMap/TileFeature.h"
 
 ADanmakuPlayerController::ADanmakuPlayerController()
 {
@@ -34,6 +37,7 @@ void ADanmakuPlayerController::BeginPlay()
 	Super::BeginPlay();
 	
 	SetControlRotation(FRotator(0.f, -90.f, 0.f));
+	SetTranslucentSortAxis(FVector(0.f, -1.f, 0.f));
 
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
@@ -90,5 +94,19 @@ void ADanmakuPlayerController::Rotate(const FInputActionValue& InputActionValue)
 	if (Value != 0.f)
 	{
 		CurrentPawn->AddControllerYawInput(Value);
+		for (ATileFeature* Feature : TActorRange<ATileFeature>(GetWorld()))
+		{
+			Feature->SetActorTickEnabled(true);
+		}
+		float Yaw = CurrentPawn->GetControlRotation().Yaw;
+		Yaw = FMath::DegreesToRadians(Yaw);
+		SetTranslucentSortAxis(FVector(FMath::Cos(Yaw), FMath::Sin(Yaw), 0.f));
 	}
+}
+
+void ADanmakuPlayerController::SetTranslucentSortAxis(const FVector& Axis)
+{
+	URendererSettings* Settings = GetMutableDefault<URendererSettings>();
+	Settings->TranslucentSortAxis = Axis;
+	Settings->SaveConfig();
 }

@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "TileChunk.generated.h"
 
+class ATileFeature;
 class UTileCell;
 
 UCLASS()
@@ -17,13 +18,15 @@ class DANMAKU_API ATileChunk : public AActor
 public:
 	ATileChunk();
 
-	void TriangulateTile();
+	void TriangulateTile(UTileCell* Cell, const int32& Index);
 	
-	void TriangulateBlend();
+	void TriangulateBlend(UTileCell* Cell, int32& Index);
 
 	void Triangulate();
 
 	void AddCell(int32 Index, UTileCell* Cell);
+
+	void AddFeature(const FVector& Position);
 
 	void Refresh();
 
@@ -36,4 +39,7 @@ private:
 	
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UInstancedStaticMeshComponent> InstancedStaticMeshComponent;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<ATileFeature*> Features;
 };

@@ -38,6 +38,14 @@ struct DANMAKU_API FTileCoordinates
 		return FTileCoordinates(X, Y);
 	}
 
+	static FVector ToPosition(const FTileCoordinates& Coordinates)
+	{
+		const int32 X = Coordinates.X * UTileMetrics::TileWidth;
+		const int32 Y = Coordinates.Y * UTileMetrics::TileHeight;
+
+		return FVector(X + 50.f, Y + 50.f, 0.f);
+	}
+
 	FString ToString() const {
 		return FString::Printf(TEXT("(%d, %d)"), X, Y);
 	}

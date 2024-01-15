@@ -39,4 +39,6 @@ private:
 	void Move(const FInputActionValue& InputActionValue);
 	
 	void Rotate(const FInputActionValue& InputActionValue);
+
+	void SetTranslucentSortAxis(const FVector& Axis);
 };
