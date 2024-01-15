@@ -11,12 +11,19 @@ ADanmakuCharacterBase::ADanmakuCharacterBase()
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 	
+	// Capsule component
+	GetCapsuleComponent()->SetCapsuleHalfHeight(50.f);
+	GetCapsuleComponent()->SetCapsuleRadius(25.f);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Block);
+
+	// Sprite flipbook component
+	GetSprite()->SetWorldScale3D(FVector(1.f, 1.f, 1.f + FMath::Cos(30.f)));
 	static ConstructorHelpers::FObjectFinder<UMaterialInstance> SpriteMaterial(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Materials/MI_Sprite.MI_Sprite'"));
 	if (SpriteMaterial.Succeeded())
 	{
 		GetSprite()->SetMaterial(0, SpriteMaterial.Object);
 	}
-	GetSprite()->SetTranslucentSortPriority(10000);
 	
 	OnCharacterMovementUpdated.AddDynamic(this, &ADanmakuCharacterBase::Animate);
 }
@@ -95,6 +102,5 @@ void ADanmakuCharacterBase::Animate(float DeltaSeconds, FVector OldLocation, FVe
 		}
 	}
 	
-	GetCapsuleComponent()->SetWorldRotation(FRotator(0.f, GetController()->GetControlRotation().Yaw + 90.f, 0.f));
-	GetSprite()->SetWorldRotation(FRotator(0.f, GetController()->GetControlRotation().Yaw + 90.f, -90.f));
+	GetSprite()->SetWorldRotation(FRotator(0.f, GetController()->GetControlRotation().Yaw + 90.f, -60.f));
 }
