@@ -23,6 +23,13 @@ UTileMapEditor::UTileMapEditor()
 		}
 	}
 
+	TArray<FIntPoint> Resolutions;
+	UKismetSystemLibrary::GetSupportedFullscreenResolutions(Resolutions);
+	for (const FIntPoint& Resolution : Resolutions)
+	{
+		SupportedResolutions.Add(FString::Printf(TEXT("%dx%d"), Resolution.X, Resolution.Y));
+	}
+
 	ActiveTileType = ETileType::Blank;
 }
 
@@ -36,7 +43,8 @@ void UTileMapEditor::BeginPlay()
 	Super::BeginPlay();
 
 	TileMapEditorWidget = SNew(STileMapEditorWidget)
-		.TileTextures(TileTextures);
+		.TileTextures(TileTextures)
+		.Resolutions(SupportedResolutions);
 	TileMapEditorWidget->TileMapEditor = this;
 
 	UGameViewportClient* ViewportClient = GetWorld()->GetGameViewport();

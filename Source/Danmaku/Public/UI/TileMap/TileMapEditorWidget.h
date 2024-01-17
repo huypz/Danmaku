@@ -16,15 +16,20 @@ public:
 	SLATE_BEGIN_ARGS(STileMapEditorWidget)
 		{}
 		SLATE_ARGUMENT(TArray<UTexture2D*>, TileTextures)
+		SLATE_ARGUMENT(TArray<FString>, Resolutions)
 	SLATE_END_ARGS()
 
 	TWeakObjectPtr<UTileMapEditor> TileMapEditor;
 
 	TSharedPtr<SUniformGridPanel> TileGridPanel;
 
+	TArray<TSharedPtr<FString>> Resolutions;
+
+	TSharedPtr<FString> SelectedResolution;
+	
 	FSlateBrush BorderBrush;
 	
 	void Construct(const FArguments& InArgs);
 
-	void RebuildFromData(const TArray<UTexture2D*>& TileTextures);
+	void BuildTileGridPanel(const TArray<UTexture2D*>& TileTextures);
 };

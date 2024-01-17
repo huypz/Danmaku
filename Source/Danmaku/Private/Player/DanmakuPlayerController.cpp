@@ -7,10 +7,13 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputAction.h"
 #include "InputMappingContext.h"
+#include "Player/DanmakuPlayerCameraManager.h"
 
 ADanmakuPlayerController::ADanmakuPlayerController()
 {
 	bShowMouseCursor = true;
+
+	//PlayerCameraManagerClass = ADanmakuPlayerCameraManager::StaticClass();
 	
 	static ConstructorHelpers::FObjectFinder<UInputMappingContext> InputMappingContext(TEXT("/Script/EnhancedInput.InputMappingContext'/Game/Input/IMC_Danmaku.IMC_Danmaku'"));
 	if (InputMappingContext.Succeeded())

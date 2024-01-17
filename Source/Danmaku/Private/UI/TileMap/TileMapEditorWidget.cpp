@@ -4,9 +4,11 @@
 #include "UI/TileMap/TileMapEditorWidget.h"
 
 #include "SlateOptMacros.h"
+#include "GameFramework/GameUserSettings.h"
 #include "TileMap/TileMapEditor.h"
 #include "TileMap/TileType.h"
 #include "UI/TileMap/TileSlotWidget.h"
+#include "Widgets/Input/SComboBox.h"
 #include "Widgets/Layout/SConstraintCanvas.h"
 #include "Widgets/Layout/SUniformGridPanel.h"
 
@@ -16,6 +18,12 @@ BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 void STileMapEditorWidget::Construct(const FArguments& InArgs)
 {
 	BorderBrush.TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.8f));
+
+	for (const FString& Resolution : InArgs._Resolutions)
+	{
+		Resolutions.Add(MakeShareable(new FString(Resolution)));
+	}
+	SelectedResolution = Resolutions[0];
 	
 	ChildSlot
 	[
@@ -35,9 +43,11 @@ void STileMapEditorWidget::Construct(const FArguments& InArgs)
 				[
 					SNew(SVerticalBox)
 					+ SVerticalBox::Slot()
+					.AutoHeight()
+					.HAlign(HAlign_Fill)
+					.VAlign(VAlign_Top)
 					[
 						SNew(SBox)
-						.WidthOverride(300.f)
 						.HeightOverride(300.f)
 						[
 							SNew(SScrollBox)
@@ -50,15 +60,59 @@ void STileMapEditorWidget::Construct(const FArguments& InArgs)
 							]
 						]
 					]
+					+ SVerticalBox::Slot()
+					.HAlign(HAlign_Center)
+					.VAlign(VAlign_Top)
+					[
+						SNew(SBox)
+						.WidthOverride(300.f)
+						.HeightOverride(75.f)
+						[
+							SNew(SComboBox<TSharedPtr<FString>>)
+							.OptionsSource(&Resolutions)
+							.OnSelectionChanged_Lambda([this](TSharedPtr<FString> NewValue, ESelectInfo::Type)
+							{
+								SelectedResolution = NewValue;
+
+								if (GEngine)
+								{
+									UGameUserSettings* GameUserSettings = GEngine->GetGameUserSettings();
+									GameUserSettings->SetScreenResolution(FIntPoint(800, 600));
+									GameUserSettings->SetFullscreenMode(EWindowMode::Windowed);
+									//GameUserSettings->SaveSettings();
+									GameUserSettings->ApplySettings(false);
+								}
+							})
+							.OnGenerateWidget_Lambda([](TSharedPtr<FString> InOption)
+							{
+								return SNew(STextBlock)
+								.Font(FSlateFontInfo(FPaths::EngineContentDir() / TEXT("Slate/Fonts/Roboto-Regular.ttf"), 16.f))
+								.Text(FText::FromString(*InOption));
+							})
+							.InitiallySelectedItem(SelectedResolution)
+							[
+								SNew(STextBlock)
+								.Font(FSlateFontInfo(FPaths::EngineContentDir() / TEXT("Slate/Fonts/Roboto-Regular.ttf"), 16.f))
+								.Text_Lambda([this]()
+								{
+									if (SelectedResolution.IsValid())
+									{
+										return FText::FromString(*SelectedResolution);
+									}
+									return NSLOCTEXT("Danmaku", "InvalidComboEntryText", "<Invalid option>");
+								})
+							]
+						]
+					]
 				]
 			]
 		]
 	];
 
-	RebuildFromData(InArgs._TileTextures);
+	BuildTileGridPanel(InArgs._TileTextures);
 }
 
-void STileMapEditorWidget::RebuildFromData(const TArray<UTexture2D*>& TileTextures)
+void STileMapEditorWidget::BuildTileGridPanel(const TArray<UTexture2D*>& TileTextures)
 {
 	TileGridPanel->ClearChildren();
 	

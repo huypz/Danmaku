@@ -24,7 +24,9 @@ ATileFeature::ATileFeature()
 
 	SpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("SpriteComponent"));
 	SpriteComponent->SetupAttachment(RootComponent);
-	SpriteComponent->SetWorldScale3D(FVector(1.f, 1.f, 1.f + FMath::Cos(30.f)));
+	SpriteComponent->SetWorldScale3D(FVector(1.f, 1.f, 1.f));
+
+	return;
 	static ConstructorHelpers::FObjectFinder<UPaperSprite> Sprite(TEXT("/Script/Paper2D.PaperSprite'/Game/PaperAssets/Environment/S_Tree.S_Tree'"));
 	if (Sprite.Succeeded())
 	{

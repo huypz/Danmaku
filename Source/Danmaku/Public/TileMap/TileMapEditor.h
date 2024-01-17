@@ -36,6 +36,9 @@ private:
 	UPROPERTY()
 	TArray<UTexture2D*> TileTextures;
 
+	UPROPERTY()
+	TArray<FString> SupportedResolutions;
+
 	ETileType ActiveTileType;
 
 	void ProcessInput();
