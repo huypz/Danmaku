@@ -43,8 +43,7 @@ void UTileMapEditor::BeginPlay()
 	Super::BeginPlay();
 
 	TileMapEditorWidget = SNew(STileMapEditorWidget)
-		.TileTextures(TileTextures)
-		.Resolutions(SupportedResolutions);
+		.TileTextures(TileTextures);
 	TileMapEditorWidget->TileMapEditor = this;
 
 	UGameViewportClient* ViewportClient = GetWorld()->GetGameViewport();

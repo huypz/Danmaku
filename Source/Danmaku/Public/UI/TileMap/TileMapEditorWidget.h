@@ -7,6 +7,9 @@
 class UTileMapEditor;
 class SUniformGridPanel;
 
+class FDanmakuUIResources
+{};
+
 /**
  * 
  */
@@ -14,22 +17,23 @@ class DANMAKU_API STileMapEditorWidget : public SCompoundWidget
 {
 public:
 	SLATE_BEGIN_ARGS(STileMapEditorWidget)
-		{}
-		SLATE_ARGUMENT(TArray<UTexture2D*>, TileTextures)
-		SLATE_ARGUMENT(TArray<FString>, Resolutions)
-	SLATE_END_ARGS()
+	{}
+	SLATE_ARGUMENT(TArray<UTexture2D*>, TileTextures)
+SLATE_END_ARGS()
 
-	TWeakObjectPtr<UTileMapEditor> TileMapEditor;
+TWeakObjectPtr<UTileMapEditor> TileMapEditor;
 
 	TSharedPtr<SUniformGridPanel> TileGridPanel;
 
-	TArray<TSharedPtr<FString>> Resolutions;
+	TArray<TObjectPtr<UTexture2D>> TileTextures;
 
-	TSharedPtr<FString> SelectedResolution;
+	TArray<TSharedPtr<FIntPoint>> Resolutions;
+
+	TSharedPtr<FIntPoint> SelectedResolution;
 	
 	FSlateBrush BorderBrush;
 	
 	void Construct(const FArguments& InArgs);
 
-	void BuildTileGridPanel(const TArray<UTexture2D*>& TileTextures);
+	void BuildTileGridPanel();
 };

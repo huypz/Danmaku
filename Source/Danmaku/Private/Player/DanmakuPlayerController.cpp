@@ -13,7 +13,7 @@ ADanmakuPlayerController::ADanmakuPlayerController()
 {
 	bShowMouseCursor = true;
 
-	//PlayerCameraManagerClass = ADanmakuPlayerCameraManager::StaticClass();
+	PlayerCameraManagerClass = ADanmakuPlayerCameraManager::StaticClass();
 	
 	static ConstructorHelpers::FObjectFinder<UInputMappingContext> InputMappingContext(TEXT("/Script/EnhancedInput.InputMappingContext'/Game/Input/IMC_Danmaku.IMC_Danmaku'"));
 	if (InputMappingContext.Succeeded())

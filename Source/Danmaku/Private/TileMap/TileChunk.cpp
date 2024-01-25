@@ -176,10 +176,10 @@ void ATileChunk::Triangulate()
 	for (UTileCell* Cell : Cells)
 	{
 		TriangulateTile(Cell, Index++);
-		if (FMath::RandRange(0, 15) == 0)
-		{
-			AddFeature(FTileCoordinates::ToPosition(Cell->Coordinates));
-		}
+		// if (FMath::RandRange(0, 15) == 0)
+		// {
+		// 	AddFeature(FTileCoordinates::ToPosition(Cell->Coordinates));
+		// }
 	}
 	for (UTileCell* Cell : Cells)
 	{

@@ -5,6 +5,7 @@
 
 #include "SlateOptMacros.h"
 #include "GameFramework/GameUserSettings.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "TileMap/TileMapEditor.h"
 #include "TileMap/TileType.h"
 #include "UI/TileMap/TileSlotWidget.h"
@@ -14,14 +15,15 @@
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
 
-
 void STileMapEditorWidget::Construct(const FArguments& InArgs)
 {
 	BorderBrush.TintColor = FSlateColor(FLinearColor(0.f, 0.f, 0.f, 0.8f));
-
-	for (const FString& Resolution : InArgs._Resolutions)
+	
+	TArray<FIntPoint> SupportedResolutions;
+	UKismetSystemLibrary::GetSupportedFullscreenResolutions(SupportedResolutions);
+	for (const FIntPoint& SupportedResolution : SupportedResolutions)
 	{
-		Resolutions.Add(MakeShareable(new FString(Resolution)));
+		Resolutions.Add(MakeShareable(new FIntPoint(SupportedResolution)));
 	}
 	SelectedResolution = Resolutions[0];
 	
@@ -66,28 +68,27 @@ void STileMapEditorWidget::Construct(const FArguments& InArgs)
 					[
 						SNew(SBox)
 						.WidthOverride(300.f)
-						.HeightOverride(75.f)
+						.HeightOverride(50.f)
 						[
-							SNew(SComboBox<TSharedPtr<FString>>)
+							SNew(SComboBox<TSharedPtr<FIntPoint>>)
 							.OptionsSource(&Resolutions)
-							.OnSelectionChanged_Lambda([this](TSharedPtr<FString> NewValue, ESelectInfo::Type)
+							.OnSelectionChanged_Lambda([this](TSharedPtr<FIntPoint> NewValue, ESelectInfo::Type)
 							{
 								SelectedResolution = NewValue;
 
 								if (GEngine)
 								{
 									UGameUserSettings* GameUserSettings = GEngine->GetGameUserSettings();
-									GameUserSettings->SetScreenResolution(FIntPoint(800, 600));
+									GameUserSettings->SetScreenResolution(*SelectedResolution);
 									GameUserSettings->SetFullscreenMode(EWindowMode::Windowed);
-									//GameUserSettings->SaveSettings();
 									GameUserSettings->ApplySettings(false);
 								}
 							})
-							.OnGenerateWidget_Lambda([](TSharedPtr<FString> InOption)
+							.OnGenerateWidget_Lambda([](TSharedPtr<FIntPoint> InOption)
 							{
 								return SNew(STextBlock)
 								.Font(FSlateFontInfo(FPaths::EngineContentDir() / TEXT("Slate/Fonts/Roboto-Regular.ttf"), 16.f))
-								.Text(FText::FromString(*InOption));
+								.Text(FText::FromString(FString::Printf(TEXT("%dx%d"), InOption->X, InOption->Y)));
 							})
 							.InitiallySelectedItem(SelectedResolution)
 							[
@@ -95,11 +96,7 @@ void STileMapEditorWidget::Construct(const FArguments& InArgs)
 								.Font(FSlateFontInfo(FPaths::EngineContentDir() / TEXT("Slate/Fonts/Roboto-Regular.ttf"), 16.f))
 								.Text_Lambda([this]()
 								{
-									if (SelectedResolution.IsValid())
-									{
-										return FText::FromString(*SelectedResolution);
-									}
-									return NSLOCTEXT("Danmaku", "InvalidComboEntryText", "<Invalid option>");
+									return FText::FromString(FString::Printf(TEXT("%dx%d"), SelectedResolution->X, SelectedResolution->Y));
 								})
 							]
 						]
@@ -109,33 +106,34 @@ void STileMapEditorWidget::Construct(const FArguments& InArgs)
 		]
 	];
 
-	BuildTileGridPanel(InArgs._TileTextures);
+	BuildTileGridPanel();
 }
 
-void STileMapEditorWidget::BuildTileGridPanel(const TArray<UTexture2D*>& TileTextures)
+void STileMapEditorWidget::BuildTileGridPanel()
 {
 	TileGridPanel->ClearChildren();
 	
 	int32 Index = 0;
 	for (const ETileType TileType : TEnumRange<ETileType>())
 	{
-		int32 TileTypeIndex = static_cast<int32>(TileType);
-		if (TileTypeIndex < TileTextures.Num())
+		UTexture2D* TileTexture = Cast<UTexture2D>(FSoftObjectPath(TileTexturePaths[TileType]).TryLoad());
+		if (TileTexture)
 		{
-			TileGridPanel->AddSlot(Index % 4, Index / 4)
-			[
-				SNew(STileSlotWidget)
-				.TileTexture(TileTextures[TileTypeIndex])
-				.OnClick(FOnClicked::CreateLambda([this, TileType]
-				{
-					if (TileMapEditor.IsValid())
-					{
-						TileMapEditor->SetTileType(TileType);
-					}
-					return FReply::Handled();
-				}))
-			];
+			TileTextures.Add(TileTexture);
 		}
+		TileGridPanel->AddSlot(Index % 4, Index / 4)
+		[
+			SNew(STileSlotWidget)
+			.TileTexture(TileTexture)
+			.OnClick(FOnClicked::CreateLambda([this, TileType]
+			{
+				if (TileMapEditor.IsValid())
+				{
+					TileMapEditor->SetTileType(TileType);
+				}
+				return FReply::Handled();
+			}))
+		];
 		Index++;
 	}
 }

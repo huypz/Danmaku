@@ -23,10 +23,12 @@ void ADanmakuPlayerCameraManager::UpdateCameraWidth(FMinimalViewInfo& OutCameraV
 	if (GameViewport && GameViewport->Viewport)
 	{
 		const FVector2D ViewportSize(GameViewport->Viewport->GetSizeXY());
-
-		float OrthoWidth = (ViewportSize.X / ReferencePixelsPerUnit) / GetPixelArtScale(ViewportSize) * ZoomFactor;
-		OrthoWidth = (FMath::Frac(OrthoWidth) > 0.9f) ? FMath::CeilToFloat(OrthoWidth) : FMath::FloorToFloat(OrthoWidth);
-		OutCameraView.OrthoWidth = OrthoWidth;
+		OutCameraView.ProjectionMode = ECameraProjectionMode::Orthographic;
+		OutCameraView.OrthoWidth = 1600.f;
+		//OutCameraView.bConstrainAspectRatio = true;
+		OutCameraView.AspectRatio = GSystemResolution.ResX / GSystemResolution.ResY;
+		//UE_LOG(LogTemp, Warning, TEXT("Game resolution: %d, %d"), GSystemResolution.ResX, GSystemResolution.ResY);
+		
 	}
 }
 
