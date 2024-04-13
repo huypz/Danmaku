@@ -32,44 +32,44 @@ ADanmakuCharacter::ADanmakuCharacter()
 	Camera->SetupAttachment(CameraSpringArm, USpringArmComponent::SocketName);
 	
 	// Idle
-	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> IdleUp(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/Frames/WizardIdleUp.WizardIdleUp'"));
+	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> IdleUp(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardIdleUp.WizardIdleUp'"));
 	if (IdleUp.Succeeded())
 	{
 		AnimationFlipbooks.IdleUp = IdleUp.Object;
 	}
-	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> IdleDown(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/Frames/WizardIdleDown.WizardIdleDown'"));
+	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> IdleDown(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardIdleDown.WizardIdleDown'"));
 	if (IdleDown.Succeeded())
 	{
 		AnimationFlipbooks.IdleDown = IdleDown.Object;
 	}
-	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> IdleLeft(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/Frames/WizardIdleLeft.WizardIdleLeft'"));
+	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> IdleLeft(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardIdleLeft.WizardIdleLeft'"));
 	if (IdleLeft.Succeeded())
 	{
 		AnimationFlipbooks.IdleLeft = IdleLeft.Object;
 	}
-	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> IdleRight(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/Frames/WizardIdleRight.WizardIdleRight'"));
+	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> IdleRight(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardIdleRight.WizardIdleRight'"));
 	if (IdleRight.Succeeded())
 	{
 		AnimationFlipbooks.IdleRight = IdleRight.Object;
 	}
 	
 	// Move
-	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> MoveUp(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/Frames/WizardMoveUp.WizardMoveUp'"));
+	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> MoveUp(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardMoveUp.WizardMoveUp'"));
 	if (MoveUp.Succeeded())
 	{
 		AnimationFlipbooks.MoveUp = MoveUp.Object;
 	}
-	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> MoveDown(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/Frames/WizardMoveDown.WizardMoveDown'"));
+	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> MoveDown(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardMoveDown.WizardMoveDown'"));
 	if (MoveDown.Succeeded())
 	{
 		AnimationFlipbooks.MoveDown = MoveDown.Object;
 	}
-	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> MoveLeft(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/Frames/WizardMoveLeft.WizardMoveLeft'"));
+	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> MoveLeft(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardMoveLeft.WizardMoveLeft'"));
 	if (MoveLeft.Succeeded())
 	{
 		AnimationFlipbooks.MoveLeft = MoveLeft.Object;
 	}
-	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> MoveRight(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/Frames/WizardMoveRight.WizardMoveRight'"));
+	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> MoveRight(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardMoveRight.WizardMoveRight'"));
 	if (MoveRight.Succeeded())
 	{
 		AnimationFlipbooks.MoveRight = MoveRight.Object;
