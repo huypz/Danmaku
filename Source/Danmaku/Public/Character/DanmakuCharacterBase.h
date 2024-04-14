@@ -68,8 +68,13 @@ protected:
 
 	EAnimationDirection AnimationDirection;
 
-	void SetAnimationDirection(FVector Velocity);
+	void SetAnimationDirection(FVector Velocity, float CameraRotation);
 	
 	UFUNCTION()
 	void Animate(float DeltaSeconds, FVector OldLocation, FVector OldVelocity);
+
+private:
+	FVector Directionality;
+
+	virtual void PostInitializeComponents() override;
 };

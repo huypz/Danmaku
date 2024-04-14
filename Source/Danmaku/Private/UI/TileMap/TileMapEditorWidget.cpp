@@ -26,6 +26,14 @@ void STileMapEditorWidget::Construct(const FArguments& InArgs)
 		Resolutions.Add(MakeShareable(new FIntPoint(SupportedResolution)));
 	}
 	SelectedResolution = Resolutions[0];
+
+	if (GEngine)
+	{
+		UGameUserSettings* GameUserSettings = GEngine->GetGameUserSettings();
+		GameUserSettings->SetScreenResolution(*SelectedResolution);
+		GameUserSettings->SetFullscreenMode(EWindowMode::Windowed);
+		GameUserSettings->ApplySettings(false);
+	}
 	
 	ChildSlot
 	[

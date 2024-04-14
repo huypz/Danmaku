@@ -5,6 +5,8 @@
 #include "GameFramework/GameMode.h"
 #include "DanmakuGameMode.generated.h"
 
+class ATileGrid;
+
 /**
  * 
  */
@@ -15,5 +17,15 @@ class DANMAKU_API ADanmakuGameMode : public AGameMode
 	
 public:
 	ADanmakuGameMode();
+
+private:
+	UPROPERTY()
+	TObjectPtr<ATileGrid> TileGrid;
+
+	virtual bool ReadyToStartMatch_Implementation() override;
+
+	virtual void HandleMatchIsWaitingToStart() override;
+	
+	virtual void InitGameState() override;
 
 };

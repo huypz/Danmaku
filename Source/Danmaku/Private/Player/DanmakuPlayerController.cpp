@@ -3,14 +3,18 @@
 
 #include "Player/DanmakuPlayerController.h"
 
+#include "EngineUtils.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputAction.h"
 #include "InputMappingContext.h"
+#include "Game/DanmakuGameState.h"
 #include "Player/DanmakuPlayerCameraManager.h"
+#include "TileMap/TileGrid.h"
 
 ADanmakuPlayerController::ADanmakuPlayerController()
 {
+	bClientFinishedProceduralGeneration = false;
 	bShowMouseCursor = true;
 
 	PlayerCameraManagerClass = ADanmakuPlayerCameraManager::StaticClass();
@@ -30,6 +34,11 @@ ADanmakuPlayerController::ADanmakuPlayerController()
 	{
 		RotateAction = InputActionRotate.Object;
 	}
+}
+
+float ADanmakuPlayerController::GetRotation() const
+{
+	return GetControlRotation().Yaw;
 }
 
 void ADanmakuPlayerController::BeginPlay()
@@ -93,5 +102,55 @@ void ADanmakuPlayerController::Rotate(const FInputActionValue& InputActionValue)
 	if (Value != 0.f)
 	{
 		CurrentPawn->AddControllerYawInput(Value);
+	}
+}
+
+void ADanmakuPlayerController::ServerClientFinishedProcGen_Implementation()
+{
+	bClientFinishedProceduralGeneration = true;
+}
+
+void ADanmakuPlayerController::ServerRequestProcGenData_Implementation()
+{
+	ClientReceiveProcGenData();
+}
+
+void ADanmakuPlayerController::ClientReceiveProcGenData_Implementation()
+{
+	ATileGrid* ClientTileGrid = nullptr;
+	for (ATileGrid* TileGrid : TActorRange<ATileGrid>(GetWorld()))
+	{
+		ClientTileGrid = TileGrid;
+		break;
+	}
+
+	if (!ClientTileGrid)
+	{
+		return;
+	}
+
+	ClientTileGrid->Generate();
+	ServerClientFinishedProcGen();
+
+	if (ADanmakuGameState* GS = GetWorld()->GetGameState<ADanmakuGameState>())
+	{
+		GS->StartBeginPlay();
+	}
+}
+
+void ADanmakuPlayerController::PostNetInit()
+{
+	Super::PostNetInit();
+
+	ServerRequestProcGenData();
+}
+
+void ADanmakuPlayerController::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	if (IsLocalController() && GetWorld()->GetNetMode() < ENetMode::NM_Client)
+	{
+		bClientFinishedProceduralGeneration = true;
 	}
 }

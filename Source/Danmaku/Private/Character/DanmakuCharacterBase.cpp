@@ -5,17 +5,18 @@
 
 #include "PaperFlipbookComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Player/DanmakuPlayerController.h"
 
 ADanmakuCharacterBase::ADanmakuCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
+
+	Directionality = FVector(1.f, 0.f, 0.f);
 	
 	// Capsule component
 	GetCapsuleComponent()->SetCapsuleHalfHeight(50.f);
 	GetCapsuleComponent()->SetCapsuleRadius(25.f);
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Block);
 
 	// Sprite flipbook component
 	GetSprite()->SetWorldScale3D(FVector(1.f, 1.f, 1.f / FMath::Cos(FMath::DegreesToRadians(45.f))));
@@ -30,9 +31,9 @@ ADanmakuCharacterBase::ADanmakuCharacterBase()
 	OnCharacterMovementUpdated.AddDynamic(this, &ADanmakuCharacterBase::Animate);
 }
 
-void ADanmakuCharacterBase::SetAnimationDirection(FVector Velocity)
+void ADanmakuCharacterBase::SetAnimationDirection(FVector Velocity, float CameraRotation)
 {
-	FRotator YawRotation(0.f, GetControlRotation().Yaw, 0.f);
+	FRotator YawRotation(0.f, CameraRotation, 0.f);
 	FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 	float Forward = FVector::DotProduct(Velocity.GetSafeNormal(), ForwardDirection);
@@ -61,7 +62,23 @@ void ADanmakuCharacterBase::SetAnimationDirection(FVector Velocity)
 
 void ADanmakuCharacterBase::Animate(float DeltaSeconds, FVector OldLocation, FVector OldVelocity)
 {
-	SetAnimationDirection(OldVelocity);
+	float CameraRotation = 0.f;
+	if (UWorld* World = GetWorld())
+	{
+		if (ADanmakuPlayerController* PlayerController = Cast<ADanmakuPlayerController>(World->GetFirstPlayerController()))
+		{
+			CameraRotation = PlayerController->GetRotation();
+			GetSprite()->SetWorldRotation(FRotator(0.f, CameraRotation + 90.f, -45.f));
+			SetAnimationDirection(Directionality, CameraRotation);
+		}
+	}
+
+	if (OldVelocity.Size() > 0.f)
+	{
+		Directionality = OldVelocity.GetSafeNormal();
+	}
+	
+	SetAnimationDirection(OldVelocity, CameraRotation);
 
 	if (OldVelocity.Size() > 0.f)
 	{
@@ -103,6 +120,13 @@ void ADanmakuCharacterBase::Animate(float DeltaSeconds, FVector OldLocation, FVe
 			break;
 		}
 	}
-	
-	GetSprite()->SetWorldRotation(FRotator(0.f, GetController()->GetControlRotation().Yaw + 90.f, -45.f));
+}
+
+void ADanmakuCharacterBase::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Block);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 }

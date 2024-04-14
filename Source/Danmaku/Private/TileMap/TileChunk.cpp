@@ -14,11 +14,14 @@ ATileChunk::ATileChunk()
 	PrimaryActorTick.bCanEverTick = true;
 	PrimaryActorTick.bStartWithTickEnabled = true;
 
+	bNetStartup = true;
+
 	Cells.SetNum(UTileMetrics::ChunkSizeX * UTileMetrics::ChunkSizeY);
 
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 
 	InstancedStaticMeshComponent = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("InstancedStaticMeshComponent"));
+	
 	InstancedStaticMeshComponent->SetupAttachment(RootComponent);
 	InstancedStaticMeshComponent->SetNumCustomDataFloats(7);
 	InstancedStaticMeshComponent->SetCastShadow(false);

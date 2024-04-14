@@ -19,7 +19,11 @@ class DANMAKU_API ADanmakuPlayerController : public APlayerController
 	GENERATED_BODY()
 
 public:
+	bool bClientFinishedProceduralGeneration;
+	
 	ADanmakuPlayerController();
+
+	float GetRotation() const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -39,4 +43,17 @@ private:
 	void Move(const FInputActionValue& InputActionValue);
 	
 	void Rotate(const FInputActionValue& InputActionValue);
+
+	UFUNCTION(Server, Reliable)
+	void ServerClientFinishedProcGen();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRequestProcGenData();
+
+	UFUNCTION(Client, Reliable)
+	void ClientReceiveProcGenData();
+
+	virtual void PostNetInit() override;
+
+	virtual void PostInitializeComponents() override;
 };

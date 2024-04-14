@@ -15,6 +15,8 @@ ATileGrid::ATileGrid()
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 
+	bNetStartup = true;
+
 	ChunkCountX = 0;
 	ChunkCountY = 0;
 	CellCountX = 0;
@@ -45,7 +47,7 @@ void ATileGrid::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Generate();
+	//Generate();
 }
 
 void ATileGrid::CreateCell(int32 X, int32 Y, int32 Index)
