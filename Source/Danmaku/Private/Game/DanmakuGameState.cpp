@@ -7,8 +7,11 @@
 
 void ADanmakuGameState::StartBeginPlay()
 {
-	ADanmakuPlayerController* PC = Cast<ADanmakuPlayerController>(GetWorld()->GetFirstPlayerController());
-	if (PC && PC->bClientFinishedProceduralGeneration && bReplicatedHasBegunPlay && GetLocalRole() != ENetRole::ROLE_Authority)
+	ADanmakuPlayerController* PlayerController = Cast<ADanmakuPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (PlayerController &&
+		PlayerController->bClientFinishedProceduralGeneration &&
+		bReplicatedHasBegunPlay &&
+		GetLocalRole() != ENetRole::ROLE_Authority)
 	{
 		GetWorldSettings()->NotifyBeginPlay();
 		GetWorldSettings()->NotifyMatchStarted();

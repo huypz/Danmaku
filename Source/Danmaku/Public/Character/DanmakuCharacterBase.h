@@ -3,9 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemInterface.h"
 #include "PaperCharacter.h"
 #include "DanmakuCharacterBase.generated.h"
 
+class UAbilitySystemComponent;
+class UAttributeSet;
 class UPaperFlipbook;
 
 UENUM()
@@ -54,19 +57,33 @@ struct DANMAKU_API FAnimationFlipbooks
 /**
  * 
  */
-UCLASS()
-class DANMAKU_API ADanmakuCharacterBase : public APaperCharacter
+UCLASS(Abstract)
+class DANMAKU_API ADanmakuCharacterBase : public APaperCharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 	
 public:
 	ADanmakuCharacterBase();
+
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+	UAttributeSet* GetAttributeSet() const;
+
+	virtual void PossessedBy(AController* NewController) override;
+
+	virtual void OnRep_PlayerState() override;
 	
 protected:
 	UPROPERTY(VisibleAnywhere)
 	FAnimationFlipbooks AnimationFlipbooks;
 
 	EAnimationDirection AnimationDirection;
+
+	UPROPERTY()
+	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
+
+	UPROPERTY()
+	TObjectPtr<UAttributeSet> AttributeSet;
 
 	void SetAnimationDirection(FVector Velocity, float CameraRotation);
 	
@@ -77,4 +94,6 @@ private:
 	FVector Directionality;
 
 	virtual void PostInitializeComponents() override;
+
+	void InitAbilityActorInfo();
 };

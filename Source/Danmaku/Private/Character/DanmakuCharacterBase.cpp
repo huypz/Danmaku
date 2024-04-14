@@ -3,16 +3,18 @@
 
 #include "Character/DanmakuCharacterBase.h"
 
+#include "AbilitySystemComponent.h"
 #include "PaperFlipbookComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Player/DanmakuPlayerController.h"
+#include "Player/DanmakuPlayerState.h"
 
 ADanmakuCharacterBase::ADanmakuCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	PrimaryActorTick.bStartWithTickEnabled = false;
 
-	Directionality = FVector(1.f, 0.f, 0.f);
+	Directionality = FVector::ForwardVector;
 	
 	// Capsule component
 	GetCapsuleComponent()->SetCapsuleHalfHeight(50.f);
@@ -25,10 +27,18 @@ ADanmakuCharacterBase::ADanmakuCharacterBase()
 	{
 		GetSprite()->SetMaterial(0, SpriteMaterial.Object);
 	}
-	GetSprite()->SetRenderCustomDepth(true);
-	GetSprite()->SetCustomDepthStencilValue(1);
 	
 	OnCharacterMovementUpdated.AddDynamic(this, &ADanmakuCharacterBase::Animate);
+}
+
+UAbilitySystemComponent* ADanmakuCharacterBase::GetAbilitySystemComponent() const
+{
+	return AbilitySystemComponent;
+}
+
+UAttributeSet* ADanmakuCharacterBase::GetAttributeSet() const
+{
+	return AttributeSet;
 }
 
 void ADanmakuCharacterBase::SetAnimationDirection(FVector Velocity, float CameraRotation)
@@ -62,24 +72,21 @@ void ADanmakuCharacterBase::SetAnimationDirection(FVector Velocity, float Camera
 
 void ADanmakuCharacterBase::Animate(float DeltaSeconds, FVector OldLocation, FVector OldVelocity)
 {
-	float CameraRotation = 0.f;
 	if (UWorld* World = GetWorld())
 	{
 		if (ADanmakuPlayerController* PlayerController = Cast<ADanmakuPlayerController>(World->GetFirstPlayerController()))
 		{
-			CameraRotation = PlayerController->GetRotation();
+			float CameraRotation = PlayerController->GetControlRotation().Yaw;
 			GetSprite()->SetWorldRotation(FRotator(0.f, CameraRotation + 90.f, -45.f));
 			SetAnimationDirection(Directionality, CameraRotation);
 		}
 	}
-
+	
 	if (OldVelocity.Size() > 0.f)
 	{
 		Directionality = OldVelocity.GetSafeNormal();
 	}
 	
-	SetAnimationDirection(OldVelocity, CameraRotation);
-
 	if (OldVelocity.Size() > 0.f)
 	{
 		switch (AnimationDirection)
@@ -129,4 +136,29 @@ void ADanmakuCharacterBase::PostInitializeComponents()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	GetCapsuleComponent()->SetCollisionResponseToAllChannels(ECR_Block);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
+}
+
+void ADanmakuCharacterBase::InitAbilityActorInfo()
+{
+	if (ADanmakuPlayerState* DanmakuPlayerState = GetPlayerState<ADanmakuPlayerState>())
+	{
+		AbilitySystemComponent = DanmakuPlayerState->GetAbilitySystemComponent();
+		AttributeSet = DanmakuPlayerState->GetAttributeSet();
+
+		AbilitySystemComponent->InitAbilityActorInfo(DanmakuPlayerState, this);
+	}
+}
+
+void ADanmakuCharacterBase::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	InitAbilityActorInfo();
+}
+
+void ADanmakuCharacterBase::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	InitAbilityActorInfo();
 }

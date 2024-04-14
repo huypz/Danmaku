@@ -36,11 +36,6 @@ ADanmakuPlayerController::ADanmakuPlayerController()
 	}
 }
 
-float ADanmakuPlayerController::GetRotation() const
-{
-	return GetControlRotation().Yaw;
-}
-
 void ADanmakuPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
@@ -132,9 +127,9 @@ void ADanmakuPlayerController::ClientReceiveProcGenData_Implementation()
 	ClientTileGrid->Generate();
 	ServerClientFinishedProcGen();
 
-	if (ADanmakuGameState* GS = GetWorld()->GetGameState<ADanmakuGameState>())
+	if (ADanmakuGameState* GameState = GetWorld()->GetGameState<ADanmakuGameState>())
 	{
-		GS->StartBeginPlay();
+		GameState->StartBeginPlay();
 	}
 }
 

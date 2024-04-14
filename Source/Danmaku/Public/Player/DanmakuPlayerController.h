@@ -23,8 +23,6 @@ public:
 	
 	ADanmakuPlayerController();
 
-	float GetRotation() const;
-
 protected:
 	virtual void BeginPlay() override;
 	

@@ -8,6 +8,7 @@
 #include "Game/DanmakuGameState.h"
 #include "GameFramework/GameSession.h"
 #include "Player/DanmakuPlayerController.h"
+#include "Player/DanmakuPlayerState.h"
 #include "TileMap/TileGrid.h"
 #include "UI/DanmakuHUD.h"
 
@@ -17,15 +18,16 @@ ADanmakuGameMode::ADanmakuGameMode()
 	GameStateClass = ADanmakuGameState::StaticClass();
 	HUDClass = ADanmakuHUD::StaticClass();
 	PlayerControllerClass = ADanmakuPlayerController::StaticClass();
+	PlayerStateClass = ADanmakuPlayerState::StaticClass();
 }
 
 bool ADanmakuGameMode::ReadyToStartMatch_Implementation()
 {
 	for (FConstPlayerControllerIterator Iterator = GetWorld()->GetPlayerControllerIterator(); Iterator; ++Iterator)
 	{
-		if (ADanmakuPlayerController* PC = Cast<ADanmakuPlayerController>(Iterator->Get()))
+		if (ADanmakuPlayerController* PlayerController = Cast<ADanmakuPlayerController>(Iterator->Get()))
 		{
-			if (!PC->bClientFinishedProceduralGeneration)
+			if (!PlayerController->bClientFinishedProceduralGeneration)
 			{
 				return false;
 			}
