@@ -4,6 +4,7 @@
 #include "TileMap/TileMapEditor.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Player/DanmakuPlayerController.h"
 #include "TileMap/TileCell.h"
 #include "TileMap/TileGrid.h"
 #include "UI/TileMap/TileMapEditorWidget.h"
@@ -70,7 +71,7 @@ void UTileMapEditor::ProcessInput()
 {
 	// Get mouse position
 	FVector2D MousePosition;
-	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	ADanmakuPlayerController* PlayerController = Cast<ADanmakuPlayerController>(GetWorld()->GetFirstPlayerController());
 	if (PlayerController && PlayerController->GetMousePosition(MousePosition.X, MousePosition.Y))
 	{
 		// Perform raycast

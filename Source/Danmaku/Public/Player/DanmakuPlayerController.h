@@ -23,6 +23,8 @@ public:
 	
 	ADanmakuPlayerController();
 
+	FMatrix GetCameraProjectionMatrix();
+
 protected:
 	virtual void BeginPlay() override;
 	

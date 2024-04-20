@@ -29,8 +29,6 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<ATileChunk> Chunk;
-	
-	TArray<bool> IsBlendDrawn;
 
 	UTileCell();
 

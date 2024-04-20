@@ -23,7 +23,7 @@ ATileChunk::ATileChunk()
 	InstancedStaticMeshComponent = CreateDefaultSubobject<UInstancedStaticMeshComponent>(TEXT("InstancedStaticMeshComponent"));
 	
 	InstancedStaticMeshComponent->SetupAttachment(RootComponent);
-	InstancedStaticMeshComponent->SetNumCustomDataFloats(7);
+	InstancedStaticMeshComponent->SetNumCustomDataFloats(9);
 	InstancedStaticMeshComponent->SetCastShadow(false);
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> Mesh(TEXT("/Script/Engine.StaticMesh'/Engine/BasicShapes/Plane.Plane'"));
 	if (Mesh.Succeeded())
@@ -40,125 +40,192 @@ ATileChunk::ATileChunk()
 
 void ATileChunk::TriangulateTile(UTileCell* Cell, const int32& Index)
 {
-	FTransform Transform(
+	const FTransform Transform(
 		FRotator::ZeroRotator,
 		FVector(Cell->Coordinates.X * 100.f + 50.f, Cell->Coordinates.Y * 100.f + 50.f, 0.f),
 		FVector::OneVector
 	);
 	InstancedStaticMeshComponent->AddInstance(Transform, true);
-	
-	// TileTypeIndex 0
+
+	// Tile
 	InstancedStaticMeshComponent->SetCustomDataValue(
 		Index,
 		0,
 		static_cast<float>(Cell->TileType)
 	);
-	// TileUTiling 1
+	
+	// Quadrant 1
+	ETileType TileTypeIndex1 = Cell->TileType;
+	int32 MaskTypeIndex1 = MASK_DEFAULT_1;
+	if (Cell->GetNeighbor(ETileDirection::North) || Cell->GetNeighbor(ETileDirection::West))
+	{
+		UTileCell* N = Cell->GetNeighbor(ETileDirection::North);
+		UTileCell* W = Cell->GetNeighbor(ETileDirection::West);
+		if (!N || (W && N->TileType < W->TileType))
+		{
+			TileTypeIndex1 = FMath::Max(Cell->TileType, W->TileType);
+			MaskTypeIndex1 = Cell->TileType < W->TileType ? MASK_SIDE_LEFT_1 : MASK_DEFAULT_1;
+		}
+		else if (!W || (N && N->TileType > W->TileType))
+		{
+			TileTypeIndex1 = FMath::Max(Cell->TileType, N->TileType);
+			MaskTypeIndex1 = Cell->TileType < N->TileType ? MASK_SIDE_TOP_1 : MASK_DEFAULT_1;
+		}
+		else if (Cell->TileType < N->TileType || Cell->TileType < W->TileType)
+		{
+			TileTypeIndex1 = N->TileType;
+			MaskTypeIndex1 = MASK_INNER_1;
+		}
+		else if (UTileCell* NW = Cell->GetNeighbor(ETileDirection::NorthWest); NW && Cell->TileType < NW->TileType)
+		{
+			TileTypeIndex1 = NW->TileType;
+			MaskTypeIndex1 = MASK_OUTER_1;
+		}
+		else
+		{
+			TileTypeIndex1 = Cell->TileType;
+			MaskTypeIndex1 = MASK_DEFAULT_1;
+		}
+	}
 	InstancedStaticMeshComponent->SetCustomDataValue(
 		Index,
 		1,
-		1.f
+		static_cast<float>(TileTypeIndex1)
 	);
-	// TileVTiling 2
 	InstancedStaticMeshComponent->SetCustomDataValue(
 		Index,
 		2,
-		1.f
+		static_cast<float>(MaskTypeIndex1)
 	);
-	// TileUOffset 3
+	// Quadrant 2
+	ETileType TileTypeIndex2 = Cell->TileType;
+	int32 MaskTypeIndex2 = MASK_DEFAULT_2;
+	if (Cell->GetNeighbor(ETileDirection::North) || Cell->GetNeighbor(ETileDirection::East))
+	{
+		UTileCell* N = Cell->GetNeighbor(ETileDirection::North);
+		UTileCell* E = Cell->GetNeighbor(ETileDirection::East);
+		if (!N || (E && N->TileType < E->TileType))
+		{
+			TileTypeIndex2 = FMath::Max(Cell->TileType, E->TileType);
+			MaskTypeIndex2 = Cell->TileType < E->TileType ? MASK_SIDE_RIGHT_2 : MASK_DEFAULT_2;
+		}
+		else if (!E || (N && N->TileType > E->TileType))
+		{
+			TileTypeIndex2 = FMath::Max(Cell->TileType, N->TileType);
+			MaskTypeIndex2 = Cell->TileType < N->TileType ? MASK_SIDE_TOP_2 : MASK_DEFAULT_2;
+		}
+		else if (Cell->TileType < N->TileType || Cell->TileType < E->TileType)
+		{
+			TileTypeIndex2 = N->TileType;
+			MaskTypeIndex2 = MASK_INNER_2;
+		}
+		else if (UTileCell* NE = Cell->GetNeighbor(ETileDirection::NorthEast); NE && Cell->TileType < NE->TileType)
+		{
+			TileTypeIndex2 = NE->TileType;
+			MaskTypeIndex2 = MASK_OUTER_2;
+		}
+		else
+		{
+			TileTypeIndex2 = Cell->TileType;
+			MaskTypeIndex2 = MASK_DEFAULT_2;
+		}
+	}
 	InstancedStaticMeshComponent->SetCustomDataValue(
 		Index,
 		3,
-		0.f
+		static_cast<float>(TileTypeIndex2)
 	);
-	// TileVOffset 4
 	InstancedStaticMeshComponent->SetCustomDataValue(
 		Index,
 		4,
-		0.f
+		static_cast<float>(MaskTypeIndex2)
 	);
-	// MaskTypeIndex 5
+	// Quadrant 3
+	ETileType TileTypeIndex3 = Cell->TileType;
+	int32 MaskTypeIndex3 = MASK_DEFAULT_3;
+	if (Cell->GetNeighbor(ETileDirection::South) || Cell->GetNeighbor(ETileDirection::West))
+	{
+		UTileCell* S = Cell->GetNeighbor(ETileDirection::South);
+		UTileCell* W = Cell->GetNeighbor(ETileDirection::West);
+		if (!S || (W && S->TileType < W->TileType))
+		{
+			TileTypeIndex3 = FMath::Max(Cell->TileType, W->TileType);
+			MaskTypeIndex3 = Cell->TileType < W->TileType ? MASK_SIDE_LEFT_3 : MASK_DEFAULT_3;
+		}
+		else if (!W || (S && S->TileType > W->TileType))
+		{
+			TileTypeIndex3 = FMath::Max(Cell->TileType, S->TileType);
+			MaskTypeIndex3 = Cell->TileType < S->TileType ? MASK_SIDE_BOTTOM_3 : MASK_DEFAULT_3;
+		}
+		else if (Cell->TileType < W->TileType || Cell->TileType < S->TileType)
+		{
+			TileTypeIndex3 = W->TileType;
+			MaskTypeIndex3 = MASK_INNER_3;
+		}
+		else if (UTileCell* SW = Cell->GetNeighbor(ETileDirection::SouthWest); SW && Cell->TileType < SW->TileType)
+		{
+			TileTypeIndex3 = SW->TileType;
+			MaskTypeIndex3 = MASK_OUTER_3;
+		}
+		else
+		{
+			TileTypeIndex3 = Cell->TileType;
+			MaskTypeIndex3 = MASK_DEFAULT_3;
+		}
+	}
 	InstancedStaticMeshComponent->SetCustomDataValue(
 		Index,
 		5,
-		0.f
+		static_cast<float>(TileTypeIndex3)
 	);
-	// MaskUTiling 6
 	InstancedStaticMeshComponent->SetCustomDataValue(
 		Index,
 		6,
-		1.f
+		static_cast<float>(MaskTypeIndex3)
 	);
-	// MaskVTiling 7
+	// Quadrant 4
+	ETileType TileTypeIndex4 = Cell->TileType;
+	int32 MaskTypeIndex4 = MASK_DEFAULT_4;
+	if (Cell->GetNeighbor(ETileDirection::South) || Cell->GetNeighbor(ETileDirection::East))
+	{
+		UTileCell* S = Cell->GetNeighbor(ETileDirection::South);
+		UTileCell* E = Cell->GetNeighbor(ETileDirection::East);
+		if (!S || (E && S->TileType < E->TileType))
+		{
+			TileTypeIndex4 = FMath::Max(Cell->TileType, E->TileType);
+			MaskTypeIndex4 = Cell->TileType < E->TileType ? MASK_SIDE_RIGHT_4 : MASK_DEFAULT_4;
+		}
+		else if (!E || (S && S->TileType > E->TileType))
+		{
+			TileTypeIndex4 = FMath::Max(Cell->TileType, S->TileType);
+			MaskTypeIndex4 = Cell->TileType < S->TileType ? MASK_SIDE_BOTTOM_4 : MASK_DEFAULT_4;
+		}
+		else if (Cell->TileType < E->TileType || Cell->TileType < S->TileType)
+		{
+			TileTypeIndex4 = E->TileType;
+			MaskTypeIndex4 = MASK_INNER_4;
+		}
+		else if (UTileCell* SE = Cell->GetNeighbor(ETileDirection::SouthEast); SE && Cell->TileType < SE->TileType)
+		{
+			TileTypeIndex4 = SE->TileType;
+			MaskTypeIndex4 = MASK_OUTER_4;
+		}
+		else
+		{
+			TileTypeIndex4 = Cell->TileType;
+			MaskTypeIndex4 = MASK_DEFAULT_4;
+		}
+	}
 	InstancedStaticMeshComponent->SetCustomDataValue(
 		Index,
 		7,
-		1.f
+		static_cast<float>(TileTypeIndex4)
 	);
-}
-
-void ATileChunk::TriangulateBlend(UTileCell* Cell, int32& Index)
-{
-	for (int32 DirectionIndex = 0; DirectionIndex < 12; DirectionIndex++)
-	{
-		FTileBlendParams TileBlendParams(Cell->Coordinates.X, Cell->Coordinates.Y, DirectionIndex, Cell);
-		if (TileBlendParams.MaskTypeIndex == -1)
-		{
-			continue;
-		}
-		
-		FTransform Transform(
-			FRotator::ZeroRotator,
-			TileBlendParams.Position,
-			FVector(0.5f, 0.5f, 0.f)
-		);
-		InstancedStaticMeshComponent->AddInstance(Transform, true);
-		Cell->IsBlendDrawn[DirectionIndex] = true;
-		
-		// TileTypeIndex 0
-		InstancedStaticMeshComponent->SetCustomDataValue(
-			Index,
-			0,
-			static_cast<float>(Cell->TileType)
-		);
-		// TileUTiling 1
-		InstancedStaticMeshComponent->SetCustomDataValue(
-			Index,
-			1,
-			0.5f
-		);
-		// TileVTiling 2
-		InstancedStaticMeshComponent->SetCustomDataValue(
-			Index,
-			2,
-			0.5f
-		);
-		// TileUOffset 3
-		InstancedStaticMeshComponent->SetCustomDataValue(
-			Index,
-			3,
-			TileBlendParams.TileUVOffset.X
-		);
-		// TileVOffset 4
-		InstancedStaticMeshComponent->SetCustomDataValue(
-			Index,
-			4,
-			TileBlendParams.TileUVOffset.Y
-		);
-		// MaskTypeIndex 5
-		InstancedStaticMeshComponent->SetCustomDataValue(
-			Index,
-			5,
-			TileBlendParams.MaskTypeIndex
-		);
-		// MaskRotation 6
-		InstancedStaticMeshComponent->SetCustomDataValue(
-			Index,
-			6,
-			TileBlendParams.MaskRotation
-		);
-		Index++;
-	}
+	InstancedStaticMeshComponent->SetCustomDataValue(
+		Index,
+		8,
+		static_cast<float>(MaskTypeIndex4)
+	);
 }
 
 void ATileChunk::Triangulate()
@@ -179,17 +246,7 @@ void ATileChunk::Triangulate()
 	for (UTileCell* Cell : Cells)
 	{
 		TriangulateTile(Cell, Index++);
-		// if (FMath::RandRange(0, 15) == 0)
-		// {
-		// 	AddFeature(FTileCoordinates::ToPosition(Cell->Coordinates));
-		// }
 	}
-	for (UTileCell* Cell : Cells)
-	{
-		TriangulateBlend(Cell, Index);
-	}
-	
-	InstancedStaticMeshComponent->SetTranslucentSortPriority(static_cast<int32>(Cells.Top()->TileType));
 }
 
 void ATileChunk::AddCell(int32 Index, UTileCell* Cell)
@@ -209,13 +266,6 @@ void ATileChunk::AddFeature(const FVector& Position)
 
 void ATileChunk::Refresh()
 {
-	for (UTileCell* Cell : Cells)
-	{
-		for (bool& bIsBlendDrawn : Cell->IsBlendDrawn)
-		{
-			bIsBlendDrawn = false;
-		}
-	}
 	SetActorTickEnabled(true);
 }
 

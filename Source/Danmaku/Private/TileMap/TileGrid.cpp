@@ -43,13 +43,6 @@ UTileCell* ATileGrid::GetCell(const FVector& Position)
 	return Index < Cells.Num() ? Cells[Index] : nullptr;
 }
 
-void ATileGrid::BeginPlay()
-{
-	Super::BeginPlay();
-
-	//Generate();
-}
-
 void ATileGrid::CreateCell(int32 X, int32 Y, int32 Index)
 {
 	UTileCell* Cell = NewObject<UTileCell>(this, *FString::Printf(TEXT("Cell %d %d"), X, Y));

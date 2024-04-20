@@ -18,10 +18,10 @@ ADanmakuCharacterBase::ADanmakuCharacterBase()
 	
 	// Capsule component
 	GetCapsuleComponent()->SetCapsuleHalfHeight(50.f);
-	GetCapsuleComponent()->SetCapsuleRadius(25.f);
+	GetCapsuleComponent()->SetCapsuleRadius(50.f);
 
 	// Sprite flipbook component
-	GetSprite()->SetWorldScale3D(FVector(1.f, 1.f, 1.f / FMath::Cos(FMath::DegreesToRadians(45.f))));
+	GetSprite()->SetTranslucentSortPriority(10000);
 	static ConstructorHelpers::FObjectFinder<UMaterialInstance> SpriteMaterial(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Materials/MI_Sprite.MI_Sprite'"));
 	if (SpriteMaterial.Succeeded())
 	{
@@ -77,7 +77,6 @@ void ADanmakuCharacterBase::Animate(float DeltaSeconds, FVector OldLocation, FVe
 		if (ADanmakuPlayerController* PlayerController = Cast<ADanmakuPlayerController>(World->GetFirstPlayerController()))
 		{
 			float CameraRotation = PlayerController->GetControlRotation().Yaw;
-			GetSprite()->SetWorldRotation(FRotator(0.f, CameraRotation + 90.f, -45.f));
 			SetAnimationDirection(Directionality, CameraRotation);
 		}
 	}

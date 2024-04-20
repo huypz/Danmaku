@@ -20,7 +20,5 @@ void ADanmakuPlayerCameraManager::UpdateCameraWidth(FMinimalViewInfo& OutCameraV
 	}
 	
 	OutCameraView.ProjectionMode = ECameraProjectionMode::Orthographic;
-	OutCameraView.OrthoWidth = 1600.f;
-	OutCameraView.bConstrainAspectRatio = true;
-	OutCameraView.AspectRatio = GSystemResolution.ResX / GSystemResolution.ResY;
+	OutCameraView.OrthoWidth = GSystemResolution.ResX * 2;
 }

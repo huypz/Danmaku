@@ -15,7 +15,7 @@ public:
 
 	static constexpr int32 TileHeight = 100;
 
-	static constexpr int32 ChunkSizeX = 1;
+	static constexpr int32 ChunkSizeX = 5;
 
-	static constexpr int32 ChunkSizeY = 1;
+	static constexpr int32 ChunkSizeY = 5;
 };

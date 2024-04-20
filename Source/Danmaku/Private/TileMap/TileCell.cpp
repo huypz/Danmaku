@@ -9,7 +9,6 @@ UTileCell::UTileCell()
 {
 	TileType = ETileType::GrassForest;
 	Neighbors.SetNum(8);
-	IsBlendDrawn.SetNum(12);
 }
 
 void UTileCell::Refresh()

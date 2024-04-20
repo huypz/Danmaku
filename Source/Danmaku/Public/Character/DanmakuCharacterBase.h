@@ -85,6 +85,8 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UAttributeSet> AttributeSet;
 
+	virtual void PostInitializeComponents() override;
+
 	void SetAnimationDirection(FVector Velocity, float CameraRotation);
 	
 	UFUNCTION()
@@ -92,8 +94,6 @@ protected:
 
 private:
 	FVector Directionality;
-
-	virtual void PostInitializeComponents() override;
-
+	
 	void InitAbilityActorInfo();
 };

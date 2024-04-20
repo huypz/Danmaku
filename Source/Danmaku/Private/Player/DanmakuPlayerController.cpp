@@ -36,6 +36,20 @@ ADanmakuPlayerController::ADanmakuPlayerController()
 	}
 }
 
+FMatrix ADanmakuPlayerController::GetCameraProjectionMatrix()
+{
+	FMatrix ProjectionMatrix;
+
+	if( GetLocalPlayer() != nullptr )
+	{
+		FSceneViewProjectionData PlayerProjectionData;
+		GetLocalPlayer()->GetProjectionData(GetLocalPlayer()->ViewportClient->Viewport,PlayerProjectionData );
+		ProjectionMatrix = PlayerProjectionData.ProjectionMatrix;
+	}
+
+	return ProjectionMatrix;
+}
+
 void ADanmakuPlayerController::BeginPlay()
 {
 	Super::BeginPlay();

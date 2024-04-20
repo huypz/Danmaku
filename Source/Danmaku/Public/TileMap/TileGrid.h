@@ -28,9 +28,6 @@ public:
 
 	UTileCell* GetCell(const FVector& Position);
 
-protected:
-	virtual void BeginPlay() override;
-
 private:
 	int32 CellCountX;
 
