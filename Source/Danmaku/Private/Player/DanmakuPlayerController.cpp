@@ -8,6 +8,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputAction.h"
 #include "InputMappingContext.h"
+#include "Engine/RendererSettings.h"
 #include "Game/DanmakuGameState.h"
 #include "Player/DanmakuPlayerCameraManager.h"
 #include "TileMap/TileGrid.h"
@@ -34,20 +35,11 @@ ADanmakuPlayerController::ADanmakuPlayerController()
 	{
 		RotateAction = InputActionRotate.Object;
 	}
-}
-
-FMatrix ADanmakuPlayerController::GetCameraProjectionMatrix()
-{
-	FMatrix ProjectionMatrix;
-
-	if( GetLocalPlayer() != nullptr )
+	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionAttack(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/Action/IA_Attack.IA_Attack'"));
+	if (InputActionAttack.Succeeded())
 	{
-		FSceneViewProjectionData PlayerProjectionData;
-		GetLocalPlayer()->GetProjectionData(GetLocalPlayer()->ViewportClient->Viewport,PlayerProjectionData );
-		ProjectionMatrix = PlayerProjectionData.ProjectionMatrix;
+		AttackAction = InputActionAttack.Object;
 	}
-
-	return ProjectionMatrix;
 }
 
 void ADanmakuPlayerController::BeginPlay()
@@ -73,6 +65,7 @@ void ADanmakuPlayerController::SetupInputComponent()
 	{
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ADanmakuPlayerController::Move);
 		EnhancedInputComponent->BindAction(RotateAction, ETriggerEvent::Triggered, this, &ADanmakuPlayerController::Rotate);
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &ADanmakuPlayerController::Attack);
 	}
 }
 
@@ -111,6 +104,21 @@ void ADanmakuPlayerController::Rotate(const FInputActionValue& InputActionValue)
 	if (Value != 0.f)
 	{
 		CurrentPawn->AddControllerYawInput(Value);
+
+		float Yaw = CurrentPawn->GetControlRotation().Yaw;
+		Yaw = FMath::DegreesToRadians(Yaw);
+		URendererSettings* Settings = GetMutableDefault<URendererSettings>();
+		Settings->TranslucentSortAxis = FVector(FMath::Cos(Yaw), FMath::Sin(Yaw), 0.f);
+		Settings->SaveConfig();
+	}
+}
+
+void ADanmakuPlayerController::Attack(const FInputActionValue& InputActionValue)
+{
+	APawn* CurrentPawn = GetPawn<APawn>();
+	if (!CurrentPawn)
+	{
+		return;
 	}
 }
 

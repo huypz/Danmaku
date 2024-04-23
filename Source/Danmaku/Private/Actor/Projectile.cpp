@@ -6,7 +6,6 @@
 #include "PaperFlipbook.h"
 #include "PaperFlipbookComponent.h"
 #include "Components/SphereComponent.h"
-#include "Player/DanmakuPlayerController.h"
 
 AProjectile::AProjectile()
 {
@@ -34,11 +33,6 @@ void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 	
-}
-
-void AProjectile::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
 }
 
 void AProjectile::PostInitializeComponents()

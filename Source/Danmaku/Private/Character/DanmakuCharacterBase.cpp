@@ -4,7 +4,9 @@
 #include "Character/DanmakuCharacterBase.h"
 
 #include "AbilitySystemComponent.h"
+#include "PaperFlipbook.h"
 #include "PaperFlipbookComponent.h"
+#include "PaperSprite.h"
 #include "Components/CapsuleComponent.h"
 #include "Player/DanmakuPlayerController.h"
 #include "Player/DanmakuPlayerState.h"
@@ -18,14 +20,15 @@ ADanmakuCharacterBase::ADanmakuCharacterBase()
 	
 	// Capsule component
 	GetCapsuleComponent()->SetCapsuleHalfHeight(50.f);
-	GetCapsuleComponent()->SetCapsuleRadius(50.f);
+	GetCapsuleComponent()->SetCapsuleRadius(25.f);
 
 	// Sprite flipbook component
-	GetSprite()->SetTranslucentSortPriority(10000);
-	static ConstructorHelpers::FObjectFinder<UMaterialInstance> SpriteMaterial(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Materials/MI_Sprite.MI_Sprite'"));
+	GetSprite()->SetTranslucentSortPriority(INT32_MAX);
+	static ConstructorHelpers::FObjectFinder<UMaterial> SpriteMaterial(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Materials/M_Sprite.M_Sprite'"));
 	if (SpriteMaterial.Succeeded())
 	{
-		GetSprite()->SetMaterial(0, SpriteMaterial.Object);
+		DynamicSpriteMaterial = UMaterialInstanceDynamic::Create(SpriteMaterial.Object, nullptr);
+		GetSprite()->SetMaterial(0, DynamicSpriteMaterial);
 	}
 	
 	OnCharacterMovementUpdated.AddDynamic(this, &ADanmakuCharacterBase::Animate);
@@ -126,6 +129,15 @@ void ADanmakuCharacterBase::Animate(float DeltaSeconds, FVector OldLocation, FVe
 			break;
 		}
 	}
+
+	int32 CurrentAnimationFrame = GetSprite()->GetPlaybackPositionInFrames();
+	if (UPaperSprite* CurrentSprite = GetSprite()->GetFlipbook()->GetSpriteAtFrame(CurrentAnimationFrame))
+	{
+		UTexture2D* CurrentTexture = CurrentSprite->GetBakedTexture();
+		DynamicSpriteMaterial->SetTextureParameterValue(FName("SpriteTexture"), CurrentTexture);
+	}
+	
+	//GetSprite()->SetWorldRotation(FRotator(0.f, FMath::RoundToFloat(GetController()->GetControlRotation().Yaw + 90.f), -90.f));
 }
 
 void ADanmakuCharacterBase::PostInitializeComponents()

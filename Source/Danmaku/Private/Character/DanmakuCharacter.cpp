@@ -16,7 +16,7 @@ ADanmakuCharacter::ADanmakuCharacter()
 	CameraSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArmComponent"));
 	CameraSpringArm->SetupAttachment(RootComponent);
 	CameraSpringArm->SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));
-	CameraSpringArm->TargetArmLength = 1000.f;
+	CameraSpringArm->TargetArmLength = 5000.f;
 	CameraSpringArm->bEnableCameraLag = false;
 	CameraSpringArm->bEnableCameraRotationLag = false;
 	CameraSpringArm->bDoCollisionTest = false;
@@ -70,5 +70,27 @@ ADanmakuCharacter::ADanmakuCharacter()
 	if (MoveRight.Succeeded())
 	{
 		AnimationFlipbooks.MoveRight = MoveRight.Object;
+	}
+
+	// Attack
+	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> AttackUp(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardAttackUp.WizardAttackUp'"));
+	if (AttackUp.Succeeded())
+	{
+		AnimationFlipbooks.AttackUp = AttackUp.Object;
+	}
+	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> AttackDown(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardAttackDown.WizardAttackDown'"));
+	if (AttackDown.Succeeded())
+	{
+		AnimationFlipbooks.AttackDown = AttackDown.Object;
+	}
+	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> AttackLeft(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardAttackLeft.WizardAttackLeft'"));
+	if (AttackLeft.Succeeded())
+	{
+		AnimationFlipbooks.AttackLeft = AttackLeft.Object;
+	}
+	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> AttackRight(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardAttackRight.WizardAttackRight'"));
+	if (AttackRight.Succeeded())
+	{
+		AnimationFlipbooks.AttackRight = AttackRight.Object;
 	}
 }

@@ -20,15 +20,15 @@ class DANMAKU_API ATileFeature : public AActor
 public:
 	ATileFeature();
 
+	void SetSpriteSize(float Size);
+
 protected:
-	virtual void BeginPlay() override;
-	
 	virtual void Tick(float DeltaSeconds) override;
 	
 private:
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UCapsuleComponent> CapsuleComponent;
-	
+
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UPaperSpriteComponent> SpriteComponent;
 };

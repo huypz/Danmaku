@@ -52,6 +52,20 @@ struct DANMAKU_API FAnimationFlipbooks
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UPaperFlipbook> MoveRight;
+
+	// Attack
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UPaperFlipbook> AttackUp;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UPaperFlipbook> AttackDown;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UPaperFlipbook> AttackLeft;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UPaperFlipbook> AttackRight;
 };
 
 /**
@@ -93,6 +107,9 @@ protected:
 	void Animate(float DeltaSeconds, FVector OldLocation, FVector OldVelocity);
 
 private:
+	UPROPERTY()
+	TObjectPtr<UMaterialInstanceDynamic> DynamicSpriteMaterial;
+	
 	FVector Directionality;
 	
 	void InitAbilityActorInfo();

@@ -7,6 +7,5 @@ void UDanmakuGameViewportClient::Activated(FViewport* InViewport, const FWindowA
 {
 	Super::Activated(InViewport, InActivateEvent);
 	
-	EngineShowFlags.Tonemapper = 0;
-	EngineShowFlags.EyeAdaptation = 0;
+	ApplyViewMode(EViewModeIndex::VMI_Unlit, false, EngineShowFlags);
 }

@@ -22,6 +22,8 @@ ATileGrid::ATileGrid()
 	CellCountX = 0;
 	CellCountY = 0;
 
+	UTileMetrics::InitializeHashGrid(0);
+
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 	Editor = CreateDefaultSubobject<UTileMapEditor>(TEXT("TileMapEditorComponent"));
 	Editor->TileGrid = this;

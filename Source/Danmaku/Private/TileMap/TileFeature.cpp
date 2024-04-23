@@ -9,25 +9,22 @@
 
 ATileFeature::ATileFeature()
 {
-	PrimaryActorTick.bCanEverTick = true;
-	PrimaryActorTick.bStartWithTickEnabled = true;
+	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bStartWithTickEnabled = false;
 	
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
 	CapsuleComponent->SetupAttachment(RootComponent);
 	CapsuleComponent->SetCapsuleHalfHeight(50.f);
-	CapsuleComponent->SetCapsuleRadius(25.f);
-	CapsuleComponent->SetWorldRotation(FRotator(0.f, 0.f, -90.f));
+	CapsuleComponent->SetCapsuleRadius(20.f);
 	CapsuleComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	CapsuleComponent->SetCollisionResponseToAllChannels(ECR_Block);
 
 	SpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>(TEXT("SpriteComponent"));
 	SpriteComponent->SetupAttachment(RootComponent);
-	SpriteComponent->SetWorldScale3D(FVector(1.f, 1.f, 1.f));
-
-	return;
-	static ConstructorHelpers::FObjectFinder<UPaperSprite> Sprite(TEXT("/Script/Paper2D.PaperSprite'/Game/PaperAssets/Environment/S_Tree.S_Tree'"));
+	SpriteComponent->SetTranslucentSortPriority(INT32_MAX);
+	static ConstructorHelpers::FObjectFinder<UPaperSprite> Sprite(TEXT("/Script/Paper2D.PaperSprite'/Game/Textures/Environment/Object/T_Tree_Sprite.T_Tree_Sprite'"));
 	if (Sprite.Succeeded())
 	{
 		SpriteComponent->SetSprite(Sprite.Object);
@@ -40,12 +37,9 @@ ATileFeature::ATileFeature()
 	}
 }
 
-void ATileFeature::BeginPlay()
+void ATileFeature::SetSpriteSize(float Size)
 {
-	Super::BeginPlay();
-	
-	const FVector CurrentPosition = GetActorLocation();
-	SpriteComponent->SetWorldLocation(FVector(CurrentPosition.X, CurrentPosition.Y, 100.f));
+	//SpriteComponent->SetWorldScale3D(FVector(Size, 1.f, Size / FMath::Cos(FMath::DegreesToRadians(45.f))));
 }
 
 void ATileFeature::Tick(float DeltaSeconds)
@@ -61,7 +55,7 @@ void ATileFeature::Tick(float DeltaSeconds)
 				FVector CurrentPosition = GetActorLocation();
 				SpriteComponent->SetWorldLocation(FVector(CurrentPosition.X, CurrentPosition.Y, LocalPawn->GetActorLocation().Z));
 			}
-			SpriteComponent->SetWorldRotation(FRotator(0.f, PlayerController->GetControlRotation().Yaw + 90.f, -60.f));
+			SpriteComponent->SetWorldRotation(FRotator(0.f, FMath::RoundToFloat(PlayerController->GetControlRotation().Yaw + 90.f), -90.f));
 		}
 	}
 }

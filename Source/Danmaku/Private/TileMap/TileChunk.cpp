@@ -246,6 +246,7 @@ void ATileChunk::Triangulate()
 	for (UTileCell* Cell : Cells)
 	{
 		TriangulateTile(Cell, Index++);
+		AddFeature(FTileCoordinates::ToPosition(Cell->Coordinates));
 	}
 }
 
@@ -257,10 +258,18 @@ void ATileChunk::AddCell(int32 Index, UTileCell* Cell)
 
 void ATileChunk::AddFeature(const FVector& Position)
 {
+	FTileHash Hash = UTileMetrics::SampleHashGrid(Position);
+	if (Hash.A >= 0.1f)
+	{
+		return;
+	}
+	
 	ATileFeature* Feature = GetWorld()->SpawnActor<ATileFeature>(
 		FVector(Position.X, Position.Y, 50.f),
-		FRotator(0.f, 0.f, -90.f)
+		FRotator::ZeroRotator
 	);
+	Feature->SetSpriteSize(1.f + Hash.B * 0.5f);
+	
 	Features.Add(Feature);
 }
 

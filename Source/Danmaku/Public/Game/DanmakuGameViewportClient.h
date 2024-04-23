@@ -13,7 +13,7 @@ UCLASS()
 class DANMAKU_API UDanmakuGameViewportClient : public UGameViewportClient
 {
 	GENERATED_BODY()
-
+	
 public:
 	virtual void Activated(FViewport* InViewport, const FWindowActivateEvent& InActivateEvent) override;
 };
