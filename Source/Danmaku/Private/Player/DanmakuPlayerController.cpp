@@ -8,6 +8,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputAction.h"
 #include "InputMappingContext.h"
+#include "Actor/DanmakuActorInterface.h"
 #include "Engine/RendererSettings.h"
 #include "Game/DanmakuGameState.h"
 #include "Player/DanmakuPlayerCameraManager.h"
@@ -15,6 +16,8 @@
 
 ADanmakuPlayerController::ADanmakuPlayerController()
 {
+	CameraRotation = 0.f;
+	
 	bClientFinishedProceduralGeneration = false;
 	bShowMouseCursor = true;
 
@@ -53,8 +56,22 @@ void ADanmakuPlayerController::BeginPlay()
 			Subsystem->AddMappingContext(DefaultContext, 0);
 		}
 	}
+}
+
+void ADanmakuPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
 	
-	SetControlRotation(FRotator(0.f, -90.f, 0.f));
+	if (APawn* CurrentPawn = GetPawn<APawn>())
+	{
+		for (AActor* Actor : TActorRange<AActor>(GetWorld()))
+		{
+			if (Actor->GetClass()->ImplementsInterface(UDanmakuActorInterface::StaticClass()))
+			{
+				IDanmakuActorInterface::Execute_UpdateRotation(Actor, CurrentPawn->GetActorLocation(), CameraRotation);
+			}
+		}
+	}
 }
 
 void ADanmakuPlayerController::SetupInputComponent()
@@ -79,7 +96,7 @@ void ADanmakuPlayerController::Move(const FInputActionValue& InputActionValue)
 	
 	const FVector2D Value = InputActionValue.Get<FVector2D>();
 	
-	const FRotator Rotation(0.f, GetControlRotation().Yaw, 0.f);
+	const FRotator Rotation(0.f, CameraRotation, 0.f);
 	if (Value.X != 0.f)
 	{
 		const FVector RightDirection = FRotationMatrix(Rotation).GetUnitAxis(EAxis::Y);
@@ -100,16 +117,11 @@ void ADanmakuPlayerController::Rotate(const FInputActionValue& InputActionValue)
 		return;
 	}
 	
-	const float Value = InputActionValue.Get<float>() * 75.f * FApp::GetDeltaTime();
+	const float Value = InputActionValue.Get<float>() * 200.f * FApp::GetDeltaTime();
 	if (Value != 0.f)
 	{
-		CurrentPawn->AddControllerYawInput(Value);
 
-		float Yaw = CurrentPawn->GetControlRotation().Yaw;
-		Yaw = FMath::DegreesToRadians(Yaw);
-		URendererSettings* Settings = GetMutableDefault<URendererSettings>();
-		Settings->TranslucentSortAxis = FVector(FMath::Cos(Yaw), FMath::Sin(Yaw), 0.f);
-		Settings->SaveConfig();
+		CameraRotation += Value;
 	}
 }
 

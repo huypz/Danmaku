@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
 #include "PaperCharacter.h"
+#include "Actor/DanmakuActorInterface.h"
 #include "DanmakuCharacterBase.generated.h"
 
 class UAbilitySystemComponent;
@@ -72,7 +73,7 @@ struct DANMAKU_API FAnimationFlipbooks
  * 
  */
 UCLASS(Abstract)
-class DANMAKU_API ADanmakuCharacterBase : public APaperCharacter, public IAbilitySystemInterface
+class DANMAKU_API ADanmakuCharacterBase : public APaperCharacter, public IDanmakuActorInterface, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 	
@@ -100,6 +101,8 @@ protected:
 	TObjectPtr<UAttributeSet> AttributeSet;
 
 	virtual void PostInitializeComponents() override;
+
+	virtual void UpdateRotation_Implementation(FVector CameraLocation, float Rotation) override;
 
 	void SetAnimationDirection(FVector Velocity, float CameraRotation);
 	

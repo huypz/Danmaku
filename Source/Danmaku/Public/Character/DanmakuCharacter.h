@@ -20,6 +20,9 @@ class DANMAKU_API ADanmakuCharacter : public ADanmakuCharacterBase
 public:
 	ADanmakuCharacter();
 
+protected:
+	virtual void UpdateRotation_Implementation(FVector CameraLocation, float Rotation) override;
+
 private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USpringArmComponent> CameraSpringArm;

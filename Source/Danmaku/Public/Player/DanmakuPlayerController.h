@@ -24,8 +24,12 @@ public:
 	
 	ADanmakuPlayerController();
 
+	float CameraRotation;
+
 protected:
 	virtual void BeginPlay() override;
+
+	virtual void PlayerTick(float DeltaTime) override;
 	
 	virtual void SetupInputComponent() override;
 

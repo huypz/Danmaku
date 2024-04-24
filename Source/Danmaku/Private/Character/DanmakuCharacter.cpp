@@ -20,10 +20,10 @@ ADanmakuCharacter::ADanmakuCharacter()
 	CameraSpringArm->bEnableCameraLag = false;
 	CameraSpringArm->bEnableCameraRotationLag = false;
 	CameraSpringArm->bDoCollisionTest = false;
-	CameraSpringArm->bUsePawnControlRotation = true;
+	CameraSpringArm->bUsePawnControlRotation = false;
 	CameraSpringArm->bInheritPitch = false;
 	CameraSpringArm->bInheritRoll = false;
-	CameraSpringArm->bInheritYaw = true;
+	CameraSpringArm->bInheritYaw = false;
 	
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	Camera->SetupAttachment(CameraSpringArm, USpringArmComponent::SocketName);
@@ -92,5 +92,15 @@ ADanmakuCharacter::ADanmakuCharacter()
 	if (AttackRight.Succeeded())
 	{
 		AnimationFlipbooks.AttackRight = AttackRight.Object;
+	}
+}
+
+void ADanmakuCharacter::UpdateRotation_Implementation(FVector CameraLocation, float Rotation)
+{
+	Super::UpdateRotation_Implementation(CameraLocation, Rotation);
+	
+	if (CameraSpringArm)
+	{
+		CameraSpringArm->SetWorldRotation(FRotator(-90.f, Rotation, 0.f));
 	}
 }

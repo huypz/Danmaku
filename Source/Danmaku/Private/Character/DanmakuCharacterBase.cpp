@@ -79,8 +79,7 @@ void ADanmakuCharacterBase::Animate(float DeltaSeconds, FVector OldLocation, FVe
 	{
 		if (ADanmakuPlayerController* PlayerController = Cast<ADanmakuPlayerController>(World->GetFirstPlayerController()))
 		{
-			float CameraRotation = PlayerController->GetControlRotation().Yaw;
-			SetAnimationDirection(Directionality, CameraRotation);
+			SetAnimationDirection(Directionality, PlayerController->CameraRotation);
 		}
 	}
 	
@@ -136,8 +135,6 @@ void ADanmakuCharacterBase::Animate(float DeltaSeconds, FVector OldLocation, FVe
 		UTexture2D* CurrentTexture = CurrentSprite->GetBakedTexture();
 		DynamicSpriteMaterial->SetTextureParameterValue(FName("SpriteTexture"), CurrentTexture);
 	}
-	
-	//GetSprite()->SetWorldRotation(FRotator(0.f, FMath::RoundToFloat(GetController()->GetControlRotation().Yaw + 90.f), -90.f));
 }
 
 void ADanmakuCharacterBase::PostInitializeComponents()
@@ -157,6 +154,22 @@ void ADanmakuCharacterBase::InitAbilityActorInfo()
 		AttributeSet = DanmakuPlayerState->GetAttributeSet();
 
 		AbilitySystemComponent->InitAbilityActorInfo(DanmakuPlayerState, this);
+	}
+}
+
+void ADanmakuCharacterBase::UpdateRotation_Implementation(FVector CameraLocation, float Rotation)
+{
+	IDanmakuActorInterface::UpdateRotation_Implementation(CameraLocation, Rotation);
+
+	float Yaw = FMath::DegreesToRadians(Rotation);
+	FVector SortAxis = FVector(FMath::Cos(Yaw), FMath::Sin(Yaw), 0.f);
+	FVector DistanceFromCamera = CameraLocation - GetActorLocation();
+	int32 SortPriority = FVector::DotProduct(DistanceFromCamera, SortAxis);
+
+	if (UPaperFlipbookComponent* CurrentSprite = GetSprite())
+	{
+		CurrentSprite->SetTranslucentSortPriority(SortPriority);
+		CurrentSprite->SetWorldRotation(FRotator(0.f, Rotation + 90.f, -90.f));
 	}
 }
 

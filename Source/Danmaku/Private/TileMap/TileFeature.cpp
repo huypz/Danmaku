@@ -39,23 +39,21 @@ ATileFeature::ATileFeature()
 
 void ATileFeature::SetSpriteSize(float Size)
 {
-	//SpriteComponent->SetWorldScale3D(FVector(Size, 1.f, Size / FMath::Cos(FMath::DegreesToRadians(45.f))));
+	SpriteComponent->SetWorldScale3D(FVector(Size));
 }
 
-void ATileFeature::Tick(float DeltaSeconds)
+void ATileFeature::UpdateRotation_Implementation(FVector CameraLocation, float Rotation)
 {
-	Super::Tick(DeltaSeconds);
+	IDanmakuActorInterface::UpdateRotation_Implementation(CameraLocation, Rotation);
+
+	float Yaw = FMath::DegreesToRadians(Rotation);
+	FVector SortAxis = FVector(FMath::Cos(Yaw), FMath::Sin(Yaw), 0.f);
+	FVector DistanceFromCamera = CameraLocation - GetActorLocation();
+	int32 SortPriority = FVector::DotProduct(DistanceFromCamera, SortAxis);
 	
-	if (UGameInstance* GameInstance = GetGameInstance())
+	if (SpriteComponent)
 	{
-		if (APlayerController* PlayerController = GameInstance->GetFirstLocalPlayerController())
-		{
-			if (APawn* LocalPawn = PlayerController->GetPawn())
-			{
-				FVector CurrentPosition = GetActorLocation();
-				SpriteComponent->SetWorldLocation(FVector(CurrentPosition.X, CurrentPosition.Y, LocalPawn->GetActorLocation().Z));
-			}
-			SpriteComponent->SetWorldRotation(FRotator(0.f, FMath::RoundToFloat(PlayerController->GetControlRotation().Yaw + 90.f), -90.f));
-		}
+		SpriteComponent->SetTranslucentSortPriority(SortPriority);
+		SpriteComponent->SetWorldRotation(FRotator(0.f, Rotation + 90.f, -90.f));
 	}
 }
