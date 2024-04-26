@@ -79,8 +79,10 @@ void STileMapEditorWidget::Construct(const FArguments& InArgs)
 								if (GEngine)
 								{
 									UGameUserSettings* GameUserSettings = GEngine->GetGameUserSettings();
-									GameUserSettings->SetScreenResolution(*SelectedResolution);
 									GameUserSettings->SetVSyncEnabled(false);
+									GameUserSettings->SetScreenResolution(*SelectedResolution);
+									GameUserSettings->SetDynamicResolutionEnabled(false);
+									GameUserSettings->SetResolutionScaleNormalized(1.f);
 									GameUserSettings->SetFullscreenMode(EWindowMode::Windowed);
 									GameUserSettings->ApplySettings(false);
 								}
