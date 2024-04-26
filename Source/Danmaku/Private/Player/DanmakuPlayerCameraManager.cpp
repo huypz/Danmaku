@@ -15,5 +15,5 @@ void ADanmakuPlayerCameraManager::DoUpdateCamera(float DeltaTime)
 void ADanmakuPlayerCameraManager::UpdateCameraWidth(FMinimalViewInfo& OutCameraView)
 {
 	OutCameraView.ProjectionMode = ECameraProjectionMode::Orthographic;
-	OutCameraView.OrthoWidth = GSystemResolution.ResX;
+	OutCameraView.OrthoWidth = GSystemResolution.ResX * 2 + 1;
 }

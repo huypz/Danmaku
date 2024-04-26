@@ -9,7 +9,6 @@
 #include "InputAction.h"
 #include "InputMappingContext.h"
 #include "Actor/DanmakuActorInterface.h"
-#include "Engine/RendererSettings.h"
 #include "Game/DanmakuGameState.h"
 #include "Player/DanmakuPlayerCameraManager.h"
 #include "TileMap/TileGrid.h"
