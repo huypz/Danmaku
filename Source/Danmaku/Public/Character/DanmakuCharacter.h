@@ -8,6 +8,7 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+class UTileMapEditorHUD;
 
 /**
  * 
@@ -20,6 +21,11 @@ class DANMAKU_API ADanmakuCharacter : public ADanmakuCharacterBase
 public:
 	ADanmakuCharacter();
 
+	virtual void BeginPlay() override;
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	
+
 protected:
 	virtual void UpdateRotation_Implementation(FVector CameraLocation, float Rotation) override;
 
@@ -29,4 +35,13 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCameraComponent> Camera;
+
+	/*
+	 * HUD
+	 */
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UTileMapEditorHUD> TileMapEditorHUDClass;
+
+	UPROPERTY()
+	TObjectPtr<UTileMapEditorHUD> TileMapEditorHUD;
 };

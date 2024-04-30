@@ -11,6 +11,8 @@
 
 
 class ATileChunk;
+class ATileFeature;
+class FBufferArchive;
 
 /**
  * 
@@ -23,18 +25,25 @@ class DANMAKU_API UTileCell : public UObject
 public:
 	UPROPERTY(VisibleAnywhere)
 	FTileCoordinates Coordinates;
-
-	UPROPERTY(VisibleAnywhere)
-	ETileType TileType;
-
+	
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<ATileChunk> Chunk;
-
+	
 	UTileCell();
 
 	void Refresh();
 
-	void SetTileType(ETileType Type);
+	void Save(FBufferArchive& Writer);
+
+	void Load(FMemoryReader& Reader);
+
+	ETileType GetTileType() const;
+
+	void SetTileType(ETileType Value);
+
+	TSubclassOf<ATileFeature> GetFeatureClass() const;
+
+	void SetFeatureClass(TSubclassOf<ATileFeature> NewFeatureClass);
 
 	void SetNeighbor(ETileDirection Direction, UTileCell* TileCell);
 
@@ -43,4 +52,10 @@ public:
 private:
 	UPROPERTY(VisibleAnywhere)
 	TArray<UTileCell*> Neighbors;
+
+	UPROPERTY(VisibleAnywhere)
+	ETileType TileType;
+
+	UPROPERTY()
+	TSubclassOf<ATileFeature> FeatureClass;
 };

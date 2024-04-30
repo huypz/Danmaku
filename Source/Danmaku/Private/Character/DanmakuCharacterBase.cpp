@@ -4,9 +4,7 @@
 #include "Character/DanmakuCharacterBase.h"
 
 #include "AbilitySystemComponent.h"
-#include "PaperFlipbook.h"
 #include "PaperFlipbookComponent.h"
-#include "PaperSprite.h"
 #include "Components/CapsuleComponent.h"
 #include "Player/DanmakuPlayerController.h"
 #include "Player/DanmakuPlayerState.h"
@@ -17,21 +15,20 @@ ADanmakuCharacterBase::ADanmakuCharacterBase()
 	PrimaryActorTick.bStartWithTickEnabled = false;
 
 	Directionality = FVector::ForwardVector;
-	
-	// Capsule component
-	GetCapsuleComponent()->SetCapsuleHalfHeight(50.f);
-	GetCapsuleComponent()->SetCapsuleRadius(25.f);
 
-	// Sprite flipbook component
-	GetSprite()->SetTranslucentSortPriority(INT32_MAX);
-	static ConstructorHelpers::FObjectFinder<UMaterial> SpriteMaterial(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Materials/M_Sprite.M_Sprite'"));
-	if (SpriteMaterial.Succeeded())
-	{
-		DynamicSpriteMaterial = UMaterialInstanceDynamic::Create(SpriteMaterial.Object, nullptr);
-		GetSprite()->SetMaterial(0, DynamicSpriteMaterial);
-	}
+
+	SetSpriteSize(10.f);
+	
+	UMaterialInterface* SpriteMaterial = GetSprite()->GetMaterial(0);
+	SpriteMaterial = UMaterialInstanceDynamic::Create(SpriteMaterial, nullptr);
+	GetSprite()->SetMaterial(0, SpriteMaterial);
 	
 	OnCharacterMovementUpdated.AddDynamic(this, &ADanmakuCharacterBase::Animate);
+}
+
+void ADanmakuCharacterBase::SetSpriteSize(float Value)
+{
+	GetSprite()->SetWorldScale3D(FVector(Value, 1.f, Value / FMath::Cos(FMath::DegreesToRadians(45.f))));
 }
 
 UAbilitySystemComponent* ADanmakuCharacterBase::GetAbilitySystemComponent() const
@@ -128,13 +125,6 @@ void ADanmakuCharacterBase::Animate(float DeltaSeconds, FVector OldLocation, FVe
 			break;
 		}
 	}
-
-	int32 CurrentAnimationFrame = GetSprite()->GetPlaybackPositionInFrames();
-	if (UPaperSprite* CurrentSprite = GetSprite()->GetFlipbook()->GetSpriteAtFrame(CurrentAnimationFrame))
-	{
-		UTexture2D* CurrentTexture = CurrentSprite->GetBakedTexture();
-		DynamicSpriteMaterial->SetTextureParameterValue(FName("SpriteTexture"), CurrentTexture);
-	}
 }
 
 void ADanmakuCharacterBase::PostInitializeComponents()
@@ -169,7 +159,7 @@ void ADanmakuCharacterBase::UpdateRotation_Implementation(FVector CameraLocation
 	if (UPaperFlipbookComponent* CurrentSprite = GetSprite())
 	{
 		CurrentSprite->SetTranslucentSortPriority(SortPriority);
-		CurrentSprite->SetWorldRotation(FRotator(0.f, Rotation + 90.f, -90.f));
+		CurrentSprite->SetWorldRotation(FRotator(0.f, Rotation + 90.f, -45.f));
 	}
 }
 

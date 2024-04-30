@@ -34,16 +34,19 @@ protected:
 	virtual void SetupInputComponent() override;
 
 private:
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UMaterialParameterCollection> MPC;
+	
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UInputMappingContext> DefaultContext;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<UInputAction> MoveAction;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<UInputAction> RotateAction;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<UInputAction> AttackAction;
 
 	void Move(const FInputActionValue& InputActionValue);

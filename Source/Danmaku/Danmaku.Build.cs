@@ -10,10 +10,10 @@ public class Danmaku : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "GameplayAbilities" });
 
-		PrivateDependencyModuleNames.AddRange(new string[] { "EnhancedInput", "GameplayTags", "GameplayTasks", "Paper2D" });
+		PrivateDependencyModuleNames.AddRange(new string[] { "EnhancedInput", "GameplayTags", "GameplayTasks", "ImageWrapper", "Paper2D", "UnrealEd" });
 
 		// Uncomment if you are using Slate UI
-		PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
+		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
 		
 		// Uncomment if you are using online features
 		// PrivateDependencyModuleNames.Add("OnlineSubsystem");

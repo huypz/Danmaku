@@ -80,6 +80,8 @@ class DANMAKU_API ADanmakuCharacterBase : public APaperCharacter, public IDanmak
 public:
 	ADanmakuCharacterBase();
 
+	void SetSpriteSize(float Value);
+
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	UAttributeSet* GetAttributeSet() const;
@@ -89,7 +91,7 @@ public:
 	virtual void OnRep_PlayerState() override;
 	
 protected:
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(EditAnywhere)
 	FAnimationFlipbooks AnimationFlipbooks;
 
 	EAnimationDirection AnimationDirection;
@@ -111,7 +113,7 @@ protected:
 
 private:
 	UPROPERTY()
-	TObjectPtr<UMaterialInstanceDynamic> DynamicSpriteMaterial;
+	TObjectPtr<UMaterialInstanceDynamic> Material;
 	
 	FVector Directionality;
 	

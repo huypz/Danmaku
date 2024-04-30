@@ -3,12 +3,16 @@
 
 #include "Character/DanmakuCharacter.h"
 
-#include "PaperFlipbook.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Player/DanmakuPlayerController.h"
+#include "UI/TileMapEditorHUD.h"
 
 ADanmakuCharacter::ADanmakuCharacter()
 {
+	TileMapEditorHUDClass = nullptr;
+	TileMapEditorHUD = nullptr;
+	
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = false;
@@ -16,7 +20,7 @@ ADanmakuCharacter::ADanmakuCharacter()
 	CameraSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraSpringArmComponent"));
 	CameraSpringArm->SetupAttachment(RootComponent);
 	CameraSpringArm->SetRelativeRotation(FRotator(-90.f, 0.f, 0.f));
-	CameraSpringArm->TargetArmLength = 5000.f;
+	CameraSpringArm->TargetArmLength = 1000.f;
 	CameraSpringArm->bEnableCameraLag = false;
 	CameraSpringArm->bEnableCameraRotationLag = false;
 	CameraSpringArm->bDoCollisionTest = false;
@@ -27,72 +31,32 @@ ADanmakuCharacter::ADanmakuCharacter()
 	
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComponent"));
 	Camera->SetupAttachment(CameraSpringArm, USpringArmComponent::SocketName);
-	
-	// Idle
-	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> IdleUp(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardIdleUp.WizardIdleUp'"));
-	if (IdleUp.Succeeded())
-	{
-		AnimationFlipbooks.IdleUp = IdleUp.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> IdleDown(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardIdleDown.WizardIdleDown'"));
-	if (IdleDown.Succeeded())
-	{
-		AnimationFlipbooks.IdleDown = IdleDown.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> IdleLeft(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardIdleLeft.WizardIdleLeft'"));
-	if (IdleLeft.Succeeded())
-	{
-		AnimationFlipbooks.IdleLeft = IdleLeft.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> IdleRight(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardIdleRight.WizardIdleRight'"));
-	if (IdleRight.Succeeded())
-	{
-		AnimationFlipbooks.IdleRight = IdleRight.Object;
-	}
-	
-	// Move
-	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> MoveUp(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardMoveUp.WizardMoveUp'"));
-	if (MoveUp.Succeeded())
-	{
-		AnimationFlipbooks.MoveUp = MoveUp.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> MoveDown(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardMoveDown.WizardMoveDown'"));
-	if (MoveDown.Succeeded())
-	{
-		AnimationFlipbooks.MoveDown = MoveDown.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> MoveLeft(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardMoveLeft.WizardMoveLeft'"));
-	if (MoveLeft.Succeeded())
-	{
-		AnimationFlipbooks.MoveLeft = MoveLeft.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> MoveRight(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardMoveRight.WizardMoveRight'"));
-	if (MoveRight.Succeeded())
-	{
-		AnimationFlipbooks.MoveRight = MoveRight.Object;
-	}
+	Camera->SetProjectionMode(ECameraProjectionMode::Orthographic);
+}
 
-	// Attack
-	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> AttackUp(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardAttackUp.WizardAttackUp'"));
-	if (AttackUp.Succeeded())
+void ADanmakuCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (IsLocallyControlled() && TileMapEditorHUDClass)
 	{
-		AnimationFlipbooks.AttackUp = AttackUp.Object;
+		if (ADanmakuPlayerController* DPC = GetController<ADanmakuPlayerController>())
+		{
+			TileMapEditorHUD = CreateWidget<UTileMapEditorHUD>(DPC, TileMapEditorHUDClass);
+			TileMapEditorHUD->AddToPlayerScreen();
+		}
 	}
-	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> AttackDown(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardAttackDown.WizardAttackDown'"));
-	if (AttackDown.Succeeded())
+}
+
+void ADanmakuCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (TileMapEditorHUD)
 	{
-		AnimationFlipbooks.AttackDown = AttackDown.Object;
+		TileMapEditorHUD->RemoveFromParent();
+		TileMapEditorHUD = nullptr;
 	}
-	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> AttackLeft(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardAttackLeft.WizardAttackLeft'"));
-	if (AttackLeft.Succeeded())
-	{
-		AnimationFlipbooks.AttackLeft = AttackLeft.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<UPaperFlipbook> AttackRight(TEXT("/Script/Paper2D.PaperFlipbook'/Game/Textures/Characters/Wizard/WizardAttackRight.WizardAttackRight'"));
-	if (AttackRight.Succeeded())
-	{
-		AnimationFlipbooks.AttackRight = AttackRight.Object;
-	}
+	
+	Super::EndPlay(EndPlayReason);
 }
 
 void ADanmakuCharacter::UpdateRotation_Implementation(FVector CameraLocation, float Rotation)

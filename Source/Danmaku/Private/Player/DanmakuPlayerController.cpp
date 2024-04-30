@@ -7,9 +7,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputAction.h"
-#include "InputMappingContext.h"
 #include "Actor/DanmakuActorInterface.h"
 #include "Game/DanmakuGameState.h"
+#include "Kismet/KismetMaterialLibrary.h"
 #include "Player/DanmakuPlayerCameraManager.h"
 #include "TileMap/TileGrid.h"
 
@@ -21,32 +21,13 @@ ADanmakuPlayerController::ADanmakuPlayerController()
 	bShowMouseCursor = true;
 
 	PlayerCameraManagerClass = ADanmakuPlayerCameraManager::StaticClass();
-	
-	static ConstructorHelpers::FObjectFinder<UInputMappingContext> InputMappingContext(TEXT("/Script/EnhancedInput.InputMappingContext'/Game/Input/IMC_Danmaku.IMC_Danmaku'"));
-	if (InputMappingContext.Succeeded())
-	{
-		DefaultContext = InputMappingContext.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionMove(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/Action/IA_Move.IA_Move'"));
-	if (InputActionMove.Succeeded())
-	{
-		MoveAction = InputActionMove.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionRotate(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/Action/IA_Rotate.IA_Rotate'"));
-	if (InputActionRotate.Succeeded())
-	{
-		RotateAction = InputActionRotate.Object;
-	}
-	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionAttack(TEXT("/Script/EnhancedInput.InputAction'/Game/Input/Action/IA_Attack.IA_Attack'"));
-	if (InputActionAttack.Succeeded())
-	{
-		AttackAction = InputActionAttack.Object;
-	}
 }
 
 void ADanmakuPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UKismetMaterialLibrary::SetScalarParameterValue(this, MPC, FName(TEXT("bSkewEnabled")), 1.f);
 	
 	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
@@ -122,6 +103,8 @@ void ADanmakuPlayerController::Rotate(const FInputActionValue& InputActionValue)
 
 		CameraRotation += Value;
 	}
+
+	UKismetMaterialLibrary::SetScalarParameterValue(this, MPC, FName(TEXT("Rotation")), CameraRotation);
 }
 
 void ADanmakuPlayerController::Attack(const FInputActionValue& InputActionValue)

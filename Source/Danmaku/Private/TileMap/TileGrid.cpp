@@ -3,11 +3,11 @@
 
 #include "TileMap/TileGrid.h"
 
+#include "Serialization/BufferArchive.h"
 #include "TileMap/TileCell.h"
 #include "TileMap/TileChunk.h"
 #include "TileMap/TileCoordinates.h"
 #include "TileMap/TileDirection.h"
-#include "TileMap/TileMapEditor.h"
 
 
 ATileGrid::ATileGrid()
@@ -25,8 +25,6 @@ ATileGrid::ATileGrid()
 	UTileMetrics::InitializeHashGrid(0);
 
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
-	Editor = CreateDefaultSubobject<UTileMapEditor>(TEXT("TileMapEditorComponent"));
-	Editor->TileGrid = this;
 }
 
 void ATileGrid::Generate()
@@ -36,6 +34,26 @@ void ATileGrid::Generate()
 
 	CreateChunks();
 	CreateCells();
+}
+
+void ATileGrid::Save(FBufferArchive& Writer)
+{
+	for (int32 i = 0; i < Cells.Num(); i++)
+	{
+		Cells[i]->Save(Writer);
+	}
+}
+
+void ATileGrid::Load(FMemoryReader& Reader)
+{
+	for (int32 i = 0; i < Cells.Num(); i++)
+	{
+		Cells[i]->Load(Reader);
+	}
+	for (int32 i = 0; i < Chunks.Num(); i++)
+	{
+		Chunks[i]->Refresh();
+	}
 }
 
 UTileCell* ATileGrid::GetCell(const FVector& Position)
@@ -95,7 +113,7 @@ void ATileGrid::CreateChunks()
 				0.f
 			);
 
-			ATileChunk* Chunk = GetWorld()->SpawnActor<ATileChunk>(Position, FRotator::ZeroRotator);
+			ATileChunk* Chunk = GetWorld()->SpawnActor<ATileChunk>(TileChunkClass, Position, FRotator::ZeroRotator);
 			Chunk->AttachToActor(this, FAttachmentTransformRules::KeepWorldTransform);
 			Chunks.Add(Chunk);
 		}

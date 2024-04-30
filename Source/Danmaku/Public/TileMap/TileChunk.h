@@ -30,6 +30,7 @@
 #define MASK_OUTER_3 18
 #define MASK_OUTER_4 19
 
+class UTileFeatureManager;
 class ATileFeature;
 class UTileCell;
 
@@ -47,9 +48,11 @@ public:
 
 	void AddCell(int32 Index, UTileCell* Cell);
 
-	void AddFeature(const FVector& Position);
-
 	void Refresh();
+
+	void SetMesh(UStaticMesh* Mesh);
+
+	void SetMaterial(UMaterial* Material);
 
 protected:
 	virtual void Tick(float DeltaSeconds) override;
@@ -61,6 +64,6 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UInstancedStaticMeshComponent> InstancedStaticMeshComponent;
 
-	UPROPERTY(VisibleAnywhere)
-	TArray<ATileFeature*> Features;
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UTileFeatureManager> Features;
 };

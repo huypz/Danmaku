@@ -13,10 +13,9 @@ UCLASS()
 class DANMAKU_API ADanmakuPlayerCameraManager : public APlayerCameraManager
 {
 	GENERATED_BODY()
-
+	
 protected:
 	virtual void DoUpdateCamera(float DeltaTime) override;
 	
 	void UpdateCameraWidth(FMinimalViewInfo& OutCameraView);
-	
 };

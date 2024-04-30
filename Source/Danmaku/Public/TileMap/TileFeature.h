@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "TileFeature.generated.h"
 
+class UBoxComponent;
 class UCapsuleComponent;
 class UPaperSpriteComponent;
 
@@ -21,14 +22,6 @@ class DANMAKU_API ATileFeature : public AActor, public IDanmakuActorInterface
 public:
 	ATileFeature();
 
-	void SetSpriteSize(float Size);
-
 private:
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<UCapsuleComponent> CapsuleComponent;
-
-	UPROPERTY(EditAnywhere)
-	TObjectPtr<UPaperSpriteComponent> SpriteComponent;
-
-	virtual void UpdateRotation_Implementation(FVector CameraLocation, float Rotation) override;
+	
 };
